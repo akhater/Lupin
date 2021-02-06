@@ -15,6 +15,7 @@ Assuming you are already using [LogSeq](https://logseq.com) & are familar with P
 * Entries only accepted from telegram AuthorizedIDs so not anyone can add entries to your journal
 * Entries will directly be added to your LogSeq Journal in Github
 * Entries are tagged with a timestamp supporting both 12 and 24 hrs format
+* Support for custom Journal folder and/or file 
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)

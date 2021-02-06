@@ -1,5 +1,6 @@
 from github import Github, InputGitAuthor
 from pprint import pprint
+import json
 
 import config
 from utils import getJournalPath, getCurrentTime, getTimestamp
@@ -33,8 +34,25 @@ def push(path, message, content, branch, update=False):
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
 
 def updateJournal(entry):
-    file = repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
-    data = file.decoded_content.decode("utf-8")  # Get raw string data
-    data += "\n" + config.defaultIndentLevel + " " + getCurrentTime() + " " + entry  # Modify/Create file
+    if(GitFileExists()):
+        file = repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
+        data = file.decoded_content.decode("utf-8")  # Get raw string data
+        data += "\n" + config.defaultIndentLevel + " " + getCurrentTime() + " " + entry  # Modify/Create file
 
-    push(getJournalPath(), git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=True)
+        push(getJournalPath(), git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=True)
+    else:
+        data = config.defaultIndentLevel + " " + getCurrentTime() + " " + entry  # Modify/Create file
+        
+        push(getJournalPath(), git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=False)
+
+def GitFileExists():
+    try:
+        repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
+        return True
+    except Exception  as e:
+        if (e.args[0] == 404):
+            print (e.args[0])
+            return False
+        #s = str(e)
+        # if ("Not Found" in s):
+        #     return False

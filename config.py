@@ -19,6 +19,8 @@ hour24 = (config.get('Misc','hour24')).lower()
 defaultIndentLevel = (config.get('Misc','defaultIndentLevel'))
 journalsFilesFormat = (config.get('Misc','journalsFilesFormat'))
 journalsFilesExtension = (config.get('Misc','journalsFilesExtension'))
+journalsFolder = (config.get('Misc','journalsFolder'))
+journalsPrefix = (config.get('Misc','journalsPrefix'))
 
 def isBotAuthorized(chat_id):
     isBotAuthorizedID = False
