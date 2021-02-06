@@ -1,4 +1,8 @@
-* 22ff41d (2021-02-06) -  (HEAD -> master, origin/master) <akhater> 
+* f4a1e92 (2021-02-06) -  (HEAD -> master) <akhater> 
+| feat: Added support for different Journal name formats and extensions .md | .org
+| 
+| 
+* 22ff41d (2021-02-06) -  (origin/master) <akhater> 
 | docs: added readme.md
 | 
 | 
