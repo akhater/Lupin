@@ -12,6 +12,7 @@ GitHubToken = config.GitHubToken
 GitHubFullRepo = config.GitHubUser + "/" + config.GitHubRepo
 GitHubBranch = config.GitHubBranch
 BotName = config.BotName
+TODOCommand = config.TODOCommand
 
 g = Github(GitHubToken)
 repo = g.get_repo(GitHubFullRepo)
@@ -34,6 +35,7 @@ def push(path, message, content, branch, update=False):
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
 
 def updateJournal(entry):
+    entry = buildJournalEntry(entry)
     if(GitFileExists()):
         file = repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
         data = file.decoded_content.decode("utf-8")  # Get raw string data
@@ -56,3 +58,9 @@ def GitFileExists():
         #s = str(e)
         # if ("Not Found" in s):
         #     return False
+
+def buildJournalEntry(entry):
+    if(TODOCommand in entry):
+        return config.defaultIndentLevel + " TODO " + getCurrentTime() + " " + entry.replace(TODOCommand,'')
+    else:
+        return config.defaultIndentLevel + " " + getCurrentTime() + " " + entry

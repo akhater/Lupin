@@ -12,7 +12,7 @@ def start(update, context):
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['WELCOME_MESSAGE'].format(BotName)) 
 
-def echo(update, context):
+def addEntry(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
     else:
@@ -27,7 +27,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(Filters.text, echo))
+    dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
 
 
     updater.start_polling()
