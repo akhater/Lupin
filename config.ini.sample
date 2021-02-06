@@ -1,0 +1,24 @@
+[Bot]
+; Telegram Bot Toek
+BotToken = 
+; list of authorized Chat IDs to use this bot (comma separated)
+BotAuthorizedIDs = 
+; Give your bot a name
+BotName = Lupin
+
+[GitHub]
+GitHubToken = 
+GitHubBranch = master
+; Git hub username 
+GitHubUser = 
+; LogSeq GitHub repo
+GitHubRepo = LogSeqPYBot
+; Name and email used to push 
+GitHubAuthor = 
+GitHubEmail  = 
+
+[Misc]
+; change to flase to set time to AM / PM
+hour24 = true
+; What indent level you want your entries to be at by default 
+defaultIndentLevel = ##
