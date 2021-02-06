@@ -39,11 +39,11 @@ def updateJournal(entry):
     if(GitFileExists()):
         file = repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
         data = file.decoded_content.decode("utf-8")  # Get raw string data
-        data += "\n" + config.defaultIndentLevel + " " + getCurrentTime() + " " + entry  # Modify/Create file
+        data += "\n" + entry
 
         push(getJournalPath(), git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=True)
     else:
-        data = config.defaultIndentLevel + " " + getCurrentTime() + " " + entry  # Modify/Create file
+        data = entry
         
         push(getJournalPath(), git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=False)
 
