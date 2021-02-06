@@ -9,6 +9,7 @@ Assuming you are already using [LogSeq](https://logseq.com) & are familar with P
 1. [Create a telegram bot](https://core.telegram.org/bots#creating-a-new-bot)
 1. Install [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot) library using `pip install python-telegram-bot`
 1. Install [PyGithub](https://github.com/PyGithub/PyGithub) library using `pip install pyGitHub`
+1. Generate a Github token from `https://github.com/settings/tokens`
 1. Rename `config.sample.ini` to `config.ini`
 1. Change values  in `config.ini` to fit your environment 
 # Features
