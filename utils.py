@@ -1,10 +1,10 @@
 from datetime import datetime
-from config import hour24
+from config import hour24, journalsFilesFormat, journalsFilesExtension
 
 dateTimeObj = datetime.now()
 
 def getJournalPath():
-  return "journals/" + dateTimeObj.strftime("%Y_%m_%d") + ".md"
+  return "journals/" + dateTimeObj.strftime(journalsFilesFormat) + journalsFilesExtension
 
 def getCurrentTime():
   if(hour24 == "true"):

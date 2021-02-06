@@ -17,6 +17,8 @@ GitHubAuthor = config.get('GitHub','GitHubAuthor')
 GitHubEmail  = config.get('GitHub','GitHubEmail')
 hour24 = (config.get('Misc','hour24')).lower()
 defaultIndentLevel = (config.get('Misc','defaultIndentLevel'))
+journalsFilesFormat = (config.get('Misc','journalsFilesFormat'))
+journalsFilesExtension = (config.get('Misc','journalsFilesExtension'))
 
 def isBotAuthorized(chat_id):
     isBotAuthorizedID = False
