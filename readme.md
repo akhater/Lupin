@@ -21,6 +21,8 @@ Lupin requires Python version >= 3.x
 * Entries will directly be added to your LogSeq Journal in Github
 * Entries are tagged with a timestamp supporting both 12 and 24 hrs format
 * Support for custom Journal folder and/or file 
+* Send Lupin a link to automatically create a #bookmark entry in your Journal
+* Send Lupin a YouTube video link and you will find it automatically embedded in your Journal
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
