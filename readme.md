@@ -35,7 +35,7 @@ Lupin requires Python version >= 3.x
 * Send a YouTube video link and Lupin will automatically embedded in your Journal in the form of 
     * 18:52 {{Youtube link}}
 * Support for both LogSeq regular Journal and custom Journal folder and/or file
-* Other commands: /start | /uptime 
+* Other commands: /help | /start | /uptime | /ver
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
