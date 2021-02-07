@@ -144,3 +144,6 @@ dmypy.json
 
 # config.ini
 config.ini
+
+# persistence
+persistence
