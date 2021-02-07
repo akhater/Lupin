@@ -17,12 +17,23 @@ Lupin requires Python version >= 3.x
 1. Change values in `config.ini` to fit your environment 
 1. Run the bot using `python main.py` or `python3 main.py` 
 # Features
-* Entries only accepted from telegram AuthorizedIDs so not anyone can add entries to your journal
-* Entries will directly be added to your LogSeq Journal in Github
-* Entries are tagged with a timestamp supporting both 12 and 24 hrs format
-* Support for custom Journal folder and/or file 
-* Send Lupin a link to automatically create a #bookmark entry in your Journal
-* Send Lupin a YouTube video link and you will find it automatically embedded in your Journal
+* Privacy always - self hosted & open source
+* Security 
+    * Entries are only accepted from telegram BotAuthorizedIDs so not anyone can add entries to your journal
+* Fully customization with config.ini file
+   * Rename it
+   * Translate it (no hard coded messages)
+   * much more
+* Send a thought (any text) and Lupin will
+   * Timestamp it: supporting both 12 and 24 hrs format
+   * Enter it in your Github hosted Jounral 
+* Send a link and Lupin automatically create a #bookmark entry in your Journal in the form of 
+    * 18:48 #bookmark [title](link)
+    * #bookmark tag is customizable 
+* Send a YouTube video link and Lupin will automatically embedded in your Journal in the form of 
+    * 18:52 {{Youtube link}}
+* Support for both LogSeq regular Journal and custom Journal folder and/or file
+* Other commands: /start | /uptime 
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
