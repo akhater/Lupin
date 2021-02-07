@@ -24,3 +24,6 @@ Lupin requires Python version >= 3.x
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
 * [LogSeq](https://github.com/logseq/logseq/)
+## License
+
+[MIT License](./LICENSE)
