@@ -27,6 +27,8 @@ Lupin requires Python version >= 3.x
 * Send a thought (any text) and Lupin will
    * Timestamp it: supporting both 12 and 24 hrs format
    * Enter it in your Github hosted Jounral 
+* Send your TODO list (by including TODO in the text) and Lupin will convert it to a LogSeq TODO
+    * TODO command is customizable
 * Send a link and Lupin automatically create a #bookmark entry in your Journal in the form of 
     * 18:48 #bookmark [title](link)
     * #bookmark tag is customizable 
