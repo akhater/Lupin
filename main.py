@@ -3,7 +3,7 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageH
 from config import BotToken, isBotAuthorized, BotName, GitHubBranch
 from dictionaries import bot_messages
 from git import updateJournal
-#from utils import getJournalPath
+from utils import getUptime
 
 
 def start(update, context):
@@ -11,6 +11,14 @@ def start(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['WELCOME_MESSAGE'].format(BotName)) 
+
+def uptime(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        message = "I've been up for %d days, %d hours, %d minutes, %d seconds" % getUptime()
+        context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+
 
 def addEntry(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
@@ -27,6 +35,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('uptime', uptime))
     dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
 
 
