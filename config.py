@@ -1,5 +1,4 @@
 import configparser
-from datetime import datetime
 import os
 
 config = configparser.RawConfigParser()
