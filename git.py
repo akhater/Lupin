@@ -3,7 +3,7 @@ from pprint import pprint
 import json
 
 import config
-from utils import getJournalPath, getCurrentTime, getTimestamp
+from utils import getJournalPath, getCurrentTime, getTimestamp, containsURL, getPageTitle, containsYTURL
 from dictionaries import git_messages
 
 #file_path = utils.getJournalPath()
@@ -55,12 +55,26 @@ def GitFileExists():
         if (e.args[0] == 404):
             print (e.args[0])
             return False
-        #s = str(e)
-        # if ("Not Found" in s):
-        #     return False
 
 def buildJournalEntry(entry):
+    journalEntry = ""
+
     if(TODOCommand in entry):
-        return config.defaultIndentLevel + " TODO " + getCurrentTime() + " " + entry.replace(TODOCommand,'')
+        journalEntry = config.defaultIndentLevel + " TODO " + getCurrentTime() + " " + entry.replace(TODOCommand,'')
     else:
-        return config.defaultIndentLevel + " " + getCurrentTime() + " " + entry
+        journalEntry = config.defaultIndentLevel + " " + getCurrentTime() + " " + entry
+    
+    print(entry)
+    journalEntryURL = containsYTURL(entry)
+    print (journalEntryURL)
+    if(journalEntryURL):
+        #title = getPageTitle(journalEntryURL)
+        journalEntry = journalEntry.replace(journalEntryURL, '{{youtube ' + journalEntryURL +'}}')
+    else:
+        journalEntryURL = containsURL(entry)
+        if(journalEntryURL):
+            title = getPageTitle(journalEntryURL)
+            journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
+        
+    print (journalEntry)
+    return journalEntry

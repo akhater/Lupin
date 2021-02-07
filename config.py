@@ -21,6 +21,7 @@ journalsFilesExtension = (config.get('Misc','journalsFilesExtension'))
 journalsFolder = (config.get('Misc','journalsFolder'))
 journalsPrefix = (config.get('Misc','journalsPrefix'))
 TODOCommand = (config.get('Misc','TODOCommand'))
+BookmarkTag = (config.get('Misc','BookmarkTag'))
 
 def isBotAuthorized(chat_id):
     isBotAuthorizedID = False

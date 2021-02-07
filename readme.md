@@ -11,6 +11,7 @@ Lupin requires Python version >= 3.x
 1. [Create a telegram bot](https://core.telegram.org/bots#creating-a-new-bot)
 1. Install [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot) library using `pip install python-telegram-bot` or `pip3 install python-telegram-bot`
 1. Install [PyGithub](https://github.com/PyGithub/PyGithub) library using `pip install pyGitHub` or `pip3 install pyGitHub`
+1. Install the `requests` library using `pip install requests` or `pip3 install requests`
 1. Generate a Github token from `https://github.com/settings/tokens`
 1. Rename `config.sample.ini` to `config.ini`
 1. Change values in `config.ini` to fit your environment 
