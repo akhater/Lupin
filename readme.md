@@ -37,11 +37,13 @@ Lupin requires Python version >= 3.x
 * Send `/anno uri` to import all your annotations from for the uri from [Hypothesis](https://web.hypothes.is/)
 * Support for both LogSeq regular Journal and custom Journal folder and/or file
 * Other commands: /help | /start | /uptime | /ver | /anno 
+## Screenshots
+Imported [Hypothesis](https://web.hypothes.is/) notes into LogSeq
+![](https://media.discordapp.net/attachments/808007880988426250/808378985016721408/unknown.png?width=998&height=821)
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
 * [LogSeq](https://github.com/logseq/logseq/)
 * [Hypothesis](https://web.hypothes.is/)
 ## License
-
 [MIT License](./LICENSE)
