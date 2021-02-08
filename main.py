@@ -1,10 +1,11 @@
 from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageHandler, PicklePersistence, Updater
 #from telegram import ParseMode
 
-from config import BotToken, isBotAuthorized, BotName, GitHubBranch, __version__
+from config import BotToken, isBotAuthorized, BotName, GitHubBranch, getBotVersion, isNewer, getBotAuthorizedIDs
 from dictionaries import bot_messages
 from git import updateJournal
 from utils import getUptime
+from hypothesis import getHypothesisAnnotations
 
 
 def start(update, context):
@@ -26,24 +27,33 @@ def addEntry(update, context):
     else:
         updateJournal(update.message.text)
         context.bot.send_message(chat_id=update.effective_chat.id,
-                             text=bot_messages['CONFIRMATION_MESSAGE'].format(update.message.text))
+                             text=bot_messages['JOURNALENTRY_MESSAGE'].format(update.message.text))
 
 def version(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE']) 
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['VER_MESSAGE'].format(BotName,__version__)) 
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['VER_MESSAGE'].format(BotName,getBotVersion())) 
 
 def help(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE']) 
     else:
-        commands = ["/help","/start","/uptime","/ver"]
+        commands = ["/help","/start","/uptime","/ver","/anno"]
         message = bot_messages['HELP_MESSAGE']
         for command in commands:
             message += command + "\n"
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+
+def hypothesis(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        updateJournal(getHypothesisAnnotations(context.args[0]), False)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                               text=bot_messages['HYPOTHESIS_MESSAGE'].format(context.args[0]))
+    
 
 def main():
     bot_persistence = PicklePersistence(filename='persistence')
@@ -51,12 +61,16 @@ def main():
     updater = Updater(token=BotToken, persistence=bot_persistence, use_context=True)
     dispatcher = updater.dispatcher
 
+    if(isNewer()):
+        for BotAuthorizedId in getBotAuthorizedIDs():
+            updater.bot.sendMessage(chat_id=BotAuthorizedId, text=bot_messages['VERCHANGE_MESSAGE'])
+
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('uptime', uptime))
     dispatcher.add_handler(CommandHandler('ver', version))
     dispatcher.add_handler(CommandHandler('help', help))
+    dispatcher.add_handler(CommandHandler('anno', hypothesis))   
     dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
-
 
     updater.start_polling()
     updater.idle()

@@ -34,8 +34,10 @@ def push(path, message, content, branch, update=False):
         #pass
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
 
-def updateJournal(entry):
-    entry = buildJournalEntry(entry)
+def updateJournal(entry, needsBuilding = True):
+    if needsBuilding:
+        entry = buildJournalEntry(entry)
+
     if(GitFileExists()):
         file = repo.get_contents(getJournalPath(), ref=GitHubBranch)  # Get file from Branch
         data = file.decoded_content.decode("utf-8")  # Get raw string data

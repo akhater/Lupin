@@ -34,12 +34,14 @@ Lupin requires Python version >= 3.x
     * #bookmark tag is customizable 
 * Send a YouTube video link and Lupin will automatically embedded in your Journal in the form of 
     * 18:52 {{Youtube link}}
+* Send `/anno uri` to import all your annotations from for the uri from [Hypothesis](https://web.hypothes.is/)
 * Support for both LogSeq regular Journal and custom Journal folder and/or file
-* Other commands: /help | /start | /uptime | /ver
+* Other commands: /help | /start | /uptime | /ver | /anno 
 # Credits
 * [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 * [PyGithub](https://github.com/PyGithub/PyGithub)
 * [LogSeq](https://github.com/logseq/logseq/)
+* [Hypothesis](https://web.hypothes.is/)
 ## License
 
 [MIT License](./LICENSE)

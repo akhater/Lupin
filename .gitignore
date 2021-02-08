@@ -147,3 +147,6 @@ config.ini
 
 # persistence
 persistence
+
+# .archive/
+.archive/
