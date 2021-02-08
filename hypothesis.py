@@ -1,8 +1,7 @@
 import requests
 # add / to the uri to make exclude sub pages
-from config import hypothesisToken, hypothesisUsername, defaultIndentLevel
-from utils import getPageTitle
-from collections import OrderedDict
+from config import hypothesisToken, hypothesisUsername, defaultIndentLevel, isManageHypothesis
+from utils import getWebPageTitle
 from itertools import groupby
 
 defaultIndentLevel = defaultIndentLevel + " "
@@ -14,7 +13,7 @@ def getHypothesisAnnotations(targetURI):
 
     headers = {"Authorization": "Bearer " + hypothesisToken}
     # targetURI = "https://web.hypothes.is"
-    endpoint = "https://api.hypothes.is/api/search?url=" + targetURI + "&limit=200&user=acct:" + hypothesisUsername
+    endpoint = "https://api.hypothes.is/api/search?url=" + targetURI + "&limit=200&order=asc&user=acct:" + hypothesisUsername
 
     #print(endpoint)
     r = requests.get(endpoint, headers=headers).json()
@@ -38,10 +37,12 @@ def getHypothesisAnnotations(targetURI):
     #print(groupedByURI)
     outText = ""
     for row in groupedByURI:
-        outText += defaultIndentLevel + "[" + getPageTitle(row) + "](" + row + ")" + "\n"
+        #print(row)
+        outText += defaultIndentLevel + "[" + getWebPageTitle(row) + "](" + row + ")" + "\n"
         #print(title)
+#        print((groupedByURI[row][0]['target'][0]['selector'][2]['exact']).strip())
         for i in range(len(groupedByURI[row])):
-            outText += "#" + defaultIndentLevel + groupedByURI[row][i]['target'][0]['selector'][2]['exact'] + "\n"
+            outText += "#" + defaultIndentLevel + (groupedByURI[row][i]['target'][0]['selector'][2]['exact']).strip() + "\n"
 
             if  groupedByURI[row][i]['text']:
                 annotation =  groupedByURI[row][i]['text'] + "\n"
@@ -66,4 +67,5 @@ def getHypothesisAnnotations(targetURI):
     #print(outText)
     return outText
 
-#print(getHypothesisAnnotations("https://web.hypothes.is"))
+#uri = "https://stackoverflow.com/questions/4776924/how-to-safely-get-the-file-extension-from-a-url/21836410"
+#getHypothesisAnnotations(uri)

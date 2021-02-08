@@ -1,10 +1,10 @@
 from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageHandler, PicklePersistence, Updater
 #from telegram import ParseMode
 
-from config import BotToken, isBotAuthorized, BotName, GitHubBranch, getBotVersion, isNewer, getBotAuthorizedIDs
+from config import BotToken, isBotAuthorized, BotName, GitHubBranch, getBotVersion, isNewer, getBotAuthorizedIDs, isManageHypothesis, isHypothesisEmbedded
 from dictionaries import bot_messages
 from git import updateJournal
-from utils import getUptime
+from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle
 from hypothesis import getHypothesisAnnotations
 
 
@@ -50,9 +50,22 @@ def hypothesis(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
     else:
-        updateJournal(getHypothesisAnnotations(context.args[0]), False)
+        if(isManageHypothesis()):
+            path = getAnnotationPath(context.args[0])
+            #print(path)
+            pageAlias = getWebPageTitle(context.args[0])
+            
+            updateJournal(getHypothesisAnnotations(context.args[0]), False, path, True, pageAlias)
+
+            if(isHypothesisEmbedded()):
+                updateJournal(entry='{{embed [[' + getPageTitle(path) + ']]}}')
+            else: 
+                updateJournal(entry="Annotations of [" + pageAlias + "](" + getPageTitle(path) + ")")
+        else:
+            updateJournal(getHypothesisAnnotations(context.args[0]), False)
+
         context.bot.send_message(chat_id=update.effective_chat.id,
-                               text=bot_messages['HYPOTHESIS_MESSAGE'].format(context.args[0]))
+                            text=bot_messages['HYPOTHESIS_MESSAGE'].format(context.args[0]))
     
 
 def main():

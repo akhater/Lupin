@@ -2,6 +2,8 @@ from datetime import datetime
 import re
 from config import hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, journalsPrefix
 import requests
+import hashlib
+from os.path import basename
 
 bootTime = datetime.now()
 
@@ -12,6 +14,9 @@ def getJournalPath():
     return journalsFolder + "/" + dateTimeObj.strftime(journalsFilesFormat) + journalsFilesExtension
   else:
     return journalsFolder + "/" + journalsPrefix + dateTimeObj.strftime(journalsFilesFormat) + journalsFilesExtension
+
+def getAnnotationPath(uri):
+  return 'annotations/' + getURIHash(uri) + journalsFilesExtension
 
 def getCurrentTime():
   dateTimeObj = datetime.now()
@@ -49,7 +54,7 @@ def containsURL(s):
     else:
       return False
 
-def getPageTitle(url, title_re=re.compile(r'<title>(.*?)</title>', re.UNICODE )):
+def getWebPageTitle(url, title_re=re.compile(r'<title>(.*?)</title>', re.UNICODE )):
     r = requests.get(url)
     if r.status_code == 200:
         match = title_re.search(r.text)
@@ -58,7 +63,6 @@ def getPageTitle(url, title_re=re.compile(r'<title>(.*?)</title>', re.UNICODE ))
         return Exception("No match for title in page")
     raise Exception(r.status_code)
 
-
 def containsYTURL(s):
   url = re.search('((?:https?:)?//)?((?:www|m).)?((?:youtube.com|youtu.be))(/(?:[\\w-]+\\?v=|embed/|v/)?)([\\w-]+)(\\S+)?',s)
   if url:
@@ -66,7 +70,21 @@ def containsYTURL(s):
   else:
     return False
 
+def getMD5Hash(s):
+  byte_s = s.encode('utf-8')
+  return hashlib.md5(byte_s).hexdigest()
 
-#print(containsURL('<p>Contents :</p><a href="http://w3resource.com/">Python Examples</a><a href="http://github.com">Even More Examples</a>')[0])
-#print(getPageTitle("http://w3resource.com/"))
-#print(containsYTURL("some https://www.youtube.com/watch?v=0zM4nApSvMg&feature=youtu.be link"))
+def stripURI(uri):
+  regex = re.compile(r"https?://?")
+  return regex.sub('', uri).strip().strip('/')
+
+def getURIHash(uri):
+  return getMD5Hash(stripURI(uri))
+
+def getPageTitle(path):
+  return basename(path).replace(journalsFilesExtension, '')
+
+#uri = ("https://web.hypothes.is")
+# print(getURIHash(uri))
+#print(getAnnotationPath(uri))
+#print(getPageTitle("annotations/adac032c3d5d75eda161dd3d0aab31ee.md"))

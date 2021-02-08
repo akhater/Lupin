@@ -7,8 +7,8 @@ config.read('config.ini')
 
 __vMajor__     = '0'
 __vMinor__     = '1'
-__vPatch__     = '0'
-__vRel__       = 'r'
+__vPatch__     = '1'
+__vRel__       = 'a'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
 
 BotToken = config.get('Bot','BotToken')
@@ -30,6 +30,8 @@ TODOCommand = (config.get('Misc','TODOCommand'))
 BookmarkTag = (config.get('Misc','BookmarkTag'))
 hypothesisToken = (config.get('hypothesis','hypothesisToken'))
 hypothesisUsername = (config.get('hypothesis','hypothesisUsername'))
+manageHypothesisUpdates = (config.get('hypothesis','manageHypothesisUpdates')).lower()
+embedHypothesisAnnotations = (config.get('hypothesis','embedHypothesisAnnotations')).lower()
 
 def isBotAuthorized(chat_id):
     isBotAuthorizedID = False
@@ -59,3 +61,15 @@ def getBotVersion():
 
 def getBotAuthorizedIDs():
     return BotAuthorizedIds
+
+def isManageHypothesis():
+    if manageHypothesisUpdates == 'true':
+        return True
+    else:
+        return False
+
+def isHypothesisEmbedded():
+    if embedHypothesisAnnotations == 'true':
+        return True
+    else:
+        return False
