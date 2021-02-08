@@ -7,7 +7,7 @@ Assuming you are already using [LogSeq](https://logseq.com) & are familar with P
 
 Lupin requires Python version >= 3.x
 
-1. Clone me `git clone https://github.com/akhater/Lupin.LogSeqPyBot`
+1. Clone me `git clone https://github.com/akhater/Lupin`
 1. [Create a telegram bot](https://core.telegram.org/bots#creating-a-new-bot)
 1. Install [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot) library using `pip install python-telegram-bot` or `pip3 install python-telegram-bot`
 1. Install [PyGithub](https://github.com/PyGithub/PyGithub) library using `pip install pyGitHub` or `pip3 install pyGitHub`
