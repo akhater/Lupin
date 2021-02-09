@@ -33,7 +33,7 @@ def push(path, message, content, branch, update=False):
     else:  # If file doesn't exist, create it
         #pass
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
-
+     
 def updateJournal(entry, needsBuilding = True, path=getJournalPath(), overwrite=False, alias=''):
     if needsBuilding:
         entry = buildJournalEntry(entry)
@@ -85,3 +85,7 @@ def buildJournalEntry(entry):
         
     print (journalEntry)
     return journalEntry
+
+# def upload(data):
+#     print('u')
+#     push('assets/6.jpg', "message", data, branch="master")

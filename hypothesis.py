@@ -1,6 +1,6 @@
 import requests
 # add / to the uri to make exclude sub pages
-from config import hypothesisToken, hypothesisUsername, defaultIndentLevel, isManageHypothesis
+from config import hypothesisToken, hypothesisUsername, defaultIndentLevel, isManageHypothesis, getHypothesisTagSpaceHandler
 from utils import getWebPageTitle
 from itertools import groupby
 
@@ -51,6 +51,11 @@ def getHypothesisAnnotations(targetURI):
             
             tags = ""
             for tag in groupedByURI[row][i]['tags']:
+                if (' ' in tag):
+                    if(getHypothesisTagSpaceHandler() == "[[]]"):
+                        tag = "[[" + tag + "]]"
+                    else:
+                        tag = tag.replace(' ', '-')
                 tags += "#" + tag + " "
             
             if annotation:
@@ -66,6 +71,3 @@ def getHypothesisAnnotations(targetURI):
     
     #print(outText)
     return outText
-
-#uri = "https://stackoverflow.com/questions/4776924/how-to-safely-get-the-file-extension-from-a-url/21836410"
-#getHypothesisAnnotations(uri)

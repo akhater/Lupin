@@ -47,14 +47,13 @@ def date_diff_in_seconds(dt2, dt1):
     return timedelta.days * 24 * 3600 + timedelta.seconds
 
 def containsURL(s):
-    #return search("(?P<url>https?://[^\\s]+)", s).group("url")
     url = re.search('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', s)
     if url:
       return url.group()
     else:
       return False
 
-def getWebPageTitle(url, title_re=re.compile(r'<title>(.*?)</title>', re.UNICODE )):
+def getWebPageTitle(url, title_re=re.compile(r'title[^>]*>([^<]+)<\/title>', re.UNICODE )): 
     r = requests.get(url)
     if r.status_code == 200:
         match = title_re.search(r.text)
@@ -83,8 +82,3 @@ def getURIHash(uri):
 
 def getPageTitle(path):
   return basename(path).replace(journalsFilesExtension, '')
-
-#uri = ("https://web.hypothes.is")
-# print(getURIHash(uri))
-#print(getAnnotationPath(uri))
-#print(getPageTitle("annotations/adac032c3d5d75eda161dd3d0aab31ee.md"))
