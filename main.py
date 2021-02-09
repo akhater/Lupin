@@ -83,6 +83,7 @@ def image_handler(update, context):
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['IMAGEUPLOAD_MESSAGE'].format(BotName,getBotVersion())) 
 
+    
 def main():
     bot_persistence = PicklePersistence(filename='persistence')
 
