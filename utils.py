@@ -53,6 +53,7 @@ def containsURL(s):
     else:
       return False
 
+ 
 def getWebPageTitle(url, title_re=re.compile(r'title[^>]*>([^<]+)<\/title>', re.UNICODE )): 
     r = requests.get(url)
     if r.status_code == 200:
