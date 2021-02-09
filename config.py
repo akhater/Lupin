@@ -5,10 +5,10 @@ config = configparser.RawConfigParser()
 config.optionxform = str #not to convert config to lowercase
 config.read('config.ini')
 
-__vMajor__     = '0'
-__vMinor__     = '1'
-__vPatch__     = '3'
-__vRel__       = 'a'
+__vMajor__     = '1'
+__vMinor__     = '0'
+__vPatch__     = '0'
+__vRel__       = 'r'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
 
 BotToken = config.get('Bot','BotToken')
@@ -28,6 +28,7 @@ journalsFolder = (config.get('Misc','journalsFolder'))
 journalsPrefix = (config.get('Misc','journalsPrefix'))
 TODOCommand = (config.get('Misc','TODOCommand'))
 BookmarkTag = (config.get('Misc','BookmarkTag'))
+assetsFolder = (config.get('Misc','assetsFolder'))
 hypothesisToken = (config.get('hypothesis','hypothesisToken'))
 hypothesisUsername = (config.get('hypothesis','hypothesisUsername'))
 manageHypothesisUpdates = (config.get('hypothesis','manageHypothesisUpdates')).lower()
@@ -77,3 +78,12 @@ def isHypothesisEmbedded():
 
 def getHypothesisTagSpaceHandler():
     return hypothesisTagSpaceHandler
+
+def getAssetsFolder():
+    return assetsFolder
+
+def getAssetsDestination():
+    return config.get('Bot','assetsDestination').lower()
+
+def getFirebaseBucketName():
+    return config.get('Firebase','BucketName')

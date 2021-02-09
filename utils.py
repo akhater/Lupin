@@ -1,6 +1,6 @@
 from datetime import datetime
 import re
-from config import hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, journalsPrefix
+from config import hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, journalsPrefix,getFirebaseBucketName
 import requests
 import hashlib
 from os.path import basename
@@ -26,10 +26,12 @@ def getCurrentTime():
   else:
     return dateTimeObj.strftime("%I:%M %p")
 
-def getTimestamp():
+def getTimestamp(isoFormat=False):
   dateTimeObj = datetime.now()
   
-  if(hour24 == "true"):
+  if isoFormat:
+    return dateTimeObj.strftime("%Y%m%d%H%M") 
+  elif (hour24 == "true"):
     return dateTimeObj.strftime("%Y-%m-%d %H:%M") 
   else:
     return dateTimeObj.strftime("%Y-%m-%d %I:%M %p")
@@ -83,3 +85,18 @@ def getURIHash(uri):
 
 def getPageTitle(path):
   return basename(path).replace(journalsFilesExtension, '')
+
+def UploadToFirebase(data, path):
+  #https://firebasestorage.googleapis.com/v0/b/monolith-6154f.appspot.com/o/shareX%2F$filename$
+  APIRUI = 'https://firebasestorage.googleapis.com/v0/b/' + getFirebaseBucketName() + "/o/" + path.replace('/', '%2F') 
+  
+  headers = {"Content-Type": "img/jpg"}
+
+  result = requests.post(APIRUI, 
+                        headers=headers, 
+                        data=data)
+  #print (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
+  # https://firebasestorage.googleapis.com/v0/b/monolith-6154f.appspot.com/o/assets%2F202102091338.jpg?alt=media&token=95ace281-fa00-42f8-837a-8f80e6bc4ca9
+  return (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
+
+#UploadToFirebase("c","delme/1.jpg")
