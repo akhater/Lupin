@@ -105,3 +105,16 @@ def updateAsset(data, fileType):
         path = ("![](" + UploadToFirebase(data, path) + ")")
     
     return path
+
+def a(path):
+    # contents = repo.get_contents(path, ref=GitHubBranch) 
+    # cont = contents.decoded_content.decode()
+    cont = "---\ntitle: Feb 9th, 2021\n---\n\n## #flashcard \n### question 1 \n#### some answer \n# ### question 2 \n#### some answer"
+    lines = cont.split('\n')
+    sparator = '#'
+    print(cont)
+    for i in range(len(lines) - 1):
+        if '#flashcard' in lines[i]:
+            print(lines[i])
+
+a("journals/2021_02_09.md")

@@ -8,9 +8,16 @@ bot_messages = {
     'VER_MESSAGE'               : 'Congrats, you are running {} version {}',
     'HELP_MESSAGE'              : 'List of Available Commands\n',
     'VERCHANGE_MESSAGE'         : 'Hey, I have detected a version change since our last encounter, your config.ini file may need updating. \
-                                   \nMake sure to visit https://github.com/akhater/Lupin for latest news'
+                                   \nMake sure to visit https://github.com/akhater/Lupin for latest news',
+    'CANCELLED_MESSAGE'         : 'Cancelled'
 }
 
 git_messages = {
     'COMMIT_MESSAGE'            : 'Added by {} on {}'
+}
+
+btns = {
+    'SHOW_ANSWER'            : 'Show Answer',
+    'SKIP'                   : 'Skip ...',
+    'CANCEL'                 : 'Cancel'
 }
