@@ -38,7 +38,9 @@ def push(path, message, content, branch, update=False):
         #pass
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
      
-def updateJournal(entry, needsBuilding = True, path=getJournalPath(), overwrite=False, alias='', ignoreURL=False):
+def updateJournal(entry, needsBuilding = True, path = None, overwrite=False, alias='', ignoreURL=False):
+    if path == None:
+        path = getJournalPath()
     if needsBuilding:
         entry = buildJournalEntry(entry, ignoreURL)
     if(GitFileExists(path)):
