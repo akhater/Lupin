@@ -87,3 +87,9 @@ def getAssetsDestination():
 
 def getFirebaseBucketName():
     return config.get('Firebase','BucketName')
+
+def getflashcardDailyGoal():
+    return int(config.get('TimeSpacedRepetion', 'flashcardDailyGoal'))
+
+def getflashcardsTag():
+    return config.get('TimeSpacedRepetion', 'flashcardTag') 

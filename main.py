@@ -1,16 +1,19 @@
 from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageHandler, PicklePersistence, Updater
-#from telegram import ParseMode
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from io import BytesIO
+from uuid import uuid4
+
+import flashcards
 
 from config import (
     BotToken, isBotAuthorized, BotName, GitHubBranch, getBotVersion, isNewer, 
-    getBotAuthorizedIDs, isManageHypothesis, isHypothesisEmbedded
+    getBotAuthorizedIDs, isManageHypothesis, isHypothesisEmbedded, getflashcardDailyGoal
 )
 
-from dictionaries import bot_messages
-from git import updateJournal, updateAsset
+from dictionaries import bot_messages, btns
+from git import updateJournal, updateAsset, updateFlashCards
 from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle
 from hypothesis import getHypothesisAnnotations
-from io import BytesIO
 
 
 def start(update, context):
@@ -83,7 +86,108 @@ def image_handler(update, context):
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['IMAGEUPLOAD_MESSAGE'].format(BotName,getBotVersion())) 
 
-    
+def ShowSkipCancelMenu(update, context, uid):
+    button_list = [
+        [InlineKeyboardButton('😭',callback_data= "ansrfdbk_0_" + uid),
+         InlineKeyboardButton('😖',callback_data= "ansrfdbk_1_" + uid),
+         InlineKeyboardButton('😕',callback_data= "ansrfdbk_2_" + uid)],
+        [InlineKeyboardButton('😊',callback_data= "ansrfdbk_3_" + uid),
+         InlineKeyboardButton('😄',callback_data= "ansrfdbk_4_" + uid),
+         InlineKeyboardButton('🥳',callback_data= "ansrfdbk_5_" + uid)],
+        [InlineKeyboardButton(btns['SHOW_ANSWER'], callback_data=btns['SHOW_ANSWER'] + uid), 
+         InlineKeyboardButton(btns['SKIP'], callback_data=btns['SKIP'] + uid)],
+        [InlineKeyboardButton(btns['CANCEL'], callback_data=btns['CANCEL'])]
+    ] 
+
+    message = bot_messages['LINE_BREAK'] + "\n\n" + context.user_data[uid][0].question + "\n" + bot_messages['LINE_BREAK'] + "\n" 
+    message += bot_messages['FLASHCARD_OPTIONS']
+    reply_markup =  InlineKeyboardMarkup(button_list)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message, reply_markup=reply_markup) 
+
+def ShowAnswer(update,context):
+    uid = update.callback_query.data.replace(btns['SHOW_ANSWER'],'')
+    flashcard = context.user_data[uid][0]
+    message = flashcard.answer + "\n" + bot_messages['FLASHCARD_SOURCE'] + flashcard.source 
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+
+def AnswerHandler(update, context):
+    args = update.callback_query.data.split('_')
+    uid = args[2]
+    answer = int(args[1])
+    flashcard = context.user_data[uid][0]
+    flashcard.history.append(answer)
+    roundCount = int(context.user_data[uid][1]) + 1
+    roundGoal = context.user_data[uid][2]
+
+    message = bot_messages['NEXTROUND_MESSAGE'] + flashcards.updateFlashcard(flashcard)
+    context.bot.edit_message_text(
+        message_id = update.callback_query.message.message_id,
+        chat_id = update.callback_query.message.chat.id,
+        text = message,
+        )
+    if roundCount <= roundGoal:
+        context.user_data[uid] = [flashcard, roundCount, roundGoal]
+        TimeSpacedRepetition(update, context, uid)
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="All Done for Today ") 
+
+def Cancel(update,context):
+    context.bot.edit_message_text(
+        message_id = update.callback_query.message.message_id,
+        chat_id = update.callback_query.message.chat.id,
+        text = bot_messages['CANCELLED_MESSAGE'],
+        )
+
+def Skip(update, context):
+    uid = update.callback_query.data.replace(btns['SKIP'],'')
+    context.bot.edit_message_text(
+        message_id = update.callback_query.message.message_id,
+        chat_id = update.callback_query.message.chat.id,
+        text = bot_messages['SKIPPED_MESSAGE'],
+        )
+    TimeSpacedRepetition(update, context, uid)
+
+def TimeSpacedRepetition(update, context, uid=""):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE']) 
+    else:
+        try:
+            arg = context.args[0]
+        except:
+            arg = ""
+
+        if arg == "import":
+            importFlashCards(update, context)
+        else:
+            if(uid):
+                roundCount = int(context.user_data[uid][1])
+                roundGoal  = int(context.user_data[uid][2])
+            else:
+                uid = str(uuid4())
+                roundCount = 1
+                try:
+                    roundGoal = int(arg)
+                except:
+                    roundGoal = getflashcardDailyGoal()
+
+            flashcard = flashcards.a()
+            if(flashcard):
+                message = "Card " + str(roundCount) + " out of " + str(roundGoal) + "\n" 
+                context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+                context.user_data[uid] = [flashcard, roundCount, roundGoal]
+                return ShowSkipCancelMenu(update, context, uid)
+            else:
+                context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['NOPENDIGCARDS_MESSAGE'])  
+
+def importFlashCards(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['IMPORTINGFC_MESSAGE']) 
+        importResults = updateFlashCards()
+        message = bot_messages['IMPORTEDFC_MESSAGE'].format(importResults[0],importResults[1])
+        context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+
 def main():
     bot_persistence = PicklePersistence(filename='persistence')
 
@@ -100,8 +204,17 @@ def main():
     dispatcher.add_handler(CommandHandler('ver', version))
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_handler(CommandHandler('anno', hypothesis))   
+    dispatcher.add_handler(CommandHandler('importFC', importFlashCards))   
+    dispatcher.add_handler(CommandHandler('tsr', TimeSpacedRepetition))   
+
     dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
     dispatcher.add_handler(MessageHandler(Filters.photo, image_handler))
+
+    dispatcher.add_handler(CallbackQueryHandler(ShowAnswer,pattern=btns['SHOW_ANSWER'])) 
+    dispatcher.add_handler(CallbackQueryHandler(AnswerHandler,pattern="ansrfdbk"))
+    dispatcher.add_handler(CallbackQueryHandler(Skip,pattern=btns['SKIP']))  
+    dispatcher.add_handler(CallbackQueryHandler(Cancel,pattern=btns['CANCEL'])) 
+
 
     updater.start_polling()
     updater.idle()

@@ -8,8 +8,7 @@ from utils import (
     containsYTURL, getPageTitle, UploadToFirebase
 )
 from dictionaries import git_messages
-
-#file_path = utils.getJournalPath()
+import flashcards 
 
 GitHubToken = config.GitHubToken
 GitHubFullRepo = config.GitHubUser + "/" + config.GitHubRepo
@@ -20,8 +19,6 @@ assetsFolder = config.getAssetsFolder()
 
 g = Github(GitHubToken)
 repo = g.get_repo(GitHubFullRepo)
-
-
 
 def push(path, message, content, branch, update=False):
     author = InputGitAuthor(
@@ -107,3 +104,33 @@ def updateAsset(data, fileType):
         path = ("![](" + UploadToFirebase(data, path) + ")")
     
     return path
+
+def getGitFileContent(file, fetchContent = False):
+    if (fetchContent):
+        file = repo.get_contents(file, ref=GitHubBranch)  # Get file from Branch
+    # print(file.decoded_content.decode("utf-8"))
+    return file.decoded_content.decode("utf-8")  # Get raw string data
+
+def scanGit4Flashcards(path=""):
+    contents = repo.get_contents(path)
+    flashcardsList = []
+    #print (contents)
+
+    while contents:
+        content = contents.pop(0)
+        # print(content.url)
+        if '/assets/' not in content.url:
+            if content.type == "dir":
+                contents.extend(repo.get_contents(content.path))
+            else:
+                #pass
+                #file = content
+                flashcardsList += flashcards.scan4Flashcards( getGitFileContent(content) ) 
+    return(flashcardsList)
+
+def updateFlashCards():
+    return flashcards.saveFlashcardsDB( scanGit4Flashcards())
+# flashcards.saveFlashcardsDB( scanGit4Flashcards("journals"), True )
+# flashcards.saveFlashcardsDB( scanGit4Flashcards(), True )
+# flashcards.searchFlashcard("")
+# print(  scanGit4Flashcards("pages")[1]  )
