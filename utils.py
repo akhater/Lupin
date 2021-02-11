@@ -1,6 +1,8 @@
 from datetime import datetime
 import re
-from config import hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, journalsPrefix,getFirebaseBucketName
+from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, 
+                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed
+                  )
 import requests
 import hashlib
 from os.path import basename
@@ -98,3 +100,20 @@ def UploadToFirebase(data, path):
   #print (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
   # https://firebasestorage.googleapis.com/v0/b/monolith-6154f.appspot.com/o/assets%2F202102091338.jpg?alt=media&token=95ace281-fa00-42f8-837a-8f80e6bc4ca9
   return (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
+
+def getlatestNews():
+  url = 'https://github.com/akhater/Lupin/raw/master/news.json'
+
+  newslist = (requests.get(url)).json()
+  lastNewsDisplayed = getlastNewsDisplayed()
+  # print (newslist['news'][0]['news'])
+  recentNews = []
+  for news in newslist['news']:
+    # print(news)
+    if(news['newsid'] > int(lastNewsDisplayed)):
+      recentNews.append(news['news'])
+  print(newslist['news'][len(newslist)-1]['newsid'])
+  setlastNewsDisplayed(newslist['news'][len(newslist)-1]['newsid'])
+  # print (recentNews)
+  return recentNews
+

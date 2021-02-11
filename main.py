@@ -12,7 +12,7 @@ from config import (
 
 from dictionaries import bot_messages, btns
 from git import updateJournal, updateAsset, updateFlashCards
-from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle
+from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews
 from hypothesis import getHypothesisAnnotations
 
 
@@ -188,16 +188,21 @@ def importFlashCards(update, context):
         message = bot_messages['IMPORTEDFC_MESSAGE'].format(importResults[0],importResults[1])
         context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
 
+
 def main():
     bot_persistence = PicklePersistence(filename='persistence')
 
     updater = Updater(token=BotToken, persistence=bot_persistence, use_context=True)
     dispatcher = updater.dispatcher
 
-    if(isNewer()):
-        for BotAuthorizedId in getBotAuthorizedIDs():
-            updater.bot.sendMessage(chat_id=BotAuthorizedId, text=bot_messages['VERCHANGE_MESSAGE'])
+    # if(isNewer()):
+    #     for BotAuthorizedId in getBotAuthorizedIDs():
+    #         updater.bot.sendMessage(chat_id=BotAuthorizedId, text=bot_messages['VERCHANGE_MESSAGE'])
 
+    latestNews = getlatestNews()
+    for news in latestNews:
+        for BotAuthorizedId in getBotAuthorizedIDs():
+            updater.bot.sendMessage(chat_id=BotAuthorizedId, text=news)
 
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('uptime', uptime))

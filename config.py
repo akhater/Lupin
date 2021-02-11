@@ -93,3 +93,18 @@ def getflashcardDailyGoal():
 
 def getflashcardsTag():
     return config.get('TimeSpacedRepetion', 'flashcardTag') 
+
+def getlastNewsDisplayed():
+    try:
+        lastNewsDisplayed = config.get('Bot', 'lastNewsDisplayed') 
+    except:
+        lastNewsDisplayed = 0
+        config.set('Bot', 'lastNewsDisplayed', lastNewsDisplayed)
+        with open('config.ini', 'w') as configfile: 
+            config.write(configfile)   
+    return lastNewsDisplayed
+
+def setlastNewsDisplayed(newsid):
+    config.set('Bot', 'lastNewsDisplayed', newsid)
+    with open('config.ini', 'w') as configfile: 
+        config.write(configfile)   
