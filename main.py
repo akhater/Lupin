@@ -79,6 +79,7 @@ def image_handler(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
     else:
+        # print ( context.bot.getFile(update.message.photo[-1]))
         file = context.bot.getFile(update.message.photo[-1].file_id)
         f =  BytesIO(file.download_as_bytearray())
         path = updateAsset(f.getvalue(),"jpg")

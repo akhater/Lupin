@@ -12,7 +12,6 @@ __vRel__       = 'a'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
 
 BotToken = config.get('Bot','BotToken')
-BotAuthorizedIds = config.get('Bot','BotAuthorizedIDs').split(',')
 BotName = config.get('Bot','BotName')
 GitHubToken = config.get('GitHub','GitHubToken')
 GitHubBranch = config.get('GitHub','GitHubBranch')
@@ -37,7 +36,7 @@ hypothesisTagSpaceHandler = (config.get('hypothesis','hypothesisTagSpaceHandler'
 
 def isBotAuthorized(chat_id):
     isBotAuthorizedID = False
-    for BotAuthorizedId in BotAuthorizedIds:
+    for BotAuthorizedId in getBotAuthorizedIDs():
         if str(chat_id) == str(BotAuthorizedId):
             isBotAuthorizedID = True
     return isBotAuthorizedID
@@ -62,7 +61,7 @@ def getBotVersion():
     return __version__
 
 def getBotAuthorizedIDs():
-    return BotAuthorizedIds
+    return config.get('Bot','BotAuthorizedIDs').split(',')
 
 def isManageHypothesis():
     if manageHypothesisUpdates == 'true':
