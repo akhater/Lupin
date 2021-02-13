@@ -6,7 +6,7 @@ config.optionxform = str #not to convert config to lowercase
 config.read('config.ini')
 
 __vMajor__     = '2'
-__vMinor__     = '0'
+__vMinor__     = '1'
 __vPatch__     = '0'
 __vRel__       = 'a'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
