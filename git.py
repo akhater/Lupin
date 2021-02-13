@@ -1,12 +1,10 @@
 from github import Github, InputGitAuthor
 from pprint import pprint
-import json
+#import json
 
 import config
-from utils import (
-    getJournalPath, getCurrentTime, getTimestamp, containsURL, getWebPageTitle, 
-    containsYTURL, getPageTitle, UploadToFirebase
-)
+import utils
+
 from dictionaries import git_messages
 import flashcards 
 
@@ -37,25 +35,25 @@ def push(path, message, content, branch, update=False):
      
 def updateJournal(entry, needsBuilding = True, path = None, overwrite=False, alias='', ignoreURL=False):
     if path == None:
-        path = getJournalPath()
+        path = utils.getJournalPath()
     if needsBuilding:
         entry = buildJournalEntry(entry, ignoreURL)
     if(GitFileExists(path)):
         file = repo.get_contents(path, ref=GitHubBranch)  # Get file from Branch
         if(overwrite):
             #print(getPageTitle(path))
-            data = "---\ntitle: " + getPageTitle(path) + "\nalias: " + alias + "\n---\n\n"
+            data = "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n"
             #print(data)
         else:
             data = file.decoded_content.decode("utf-8")  # Get raw string data
         
         data += (entry).strip() + "\n"
 
-        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=True)
+        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=True)
     else:
-        data =  "---\ntitle: " + getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
+        data =  "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
         
-        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=False)
+        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=False)
 
 def GitFileExists(path):
     try:
@@ -70,21 +68,21 @@ def buildJournalEntry(entry, ignoreURL):
     journalEntry = ""
 
     if(TODOCommand in entry):
-        journalEntry = config.defaultIndentLevel + " TODO " + getCurrentTime() + " " + entry.replace(TODOCommand,'')
+        journalEntry = config.defaultIndentLevel + " TODO " + utils.getCurrentTime() + " " + entry.replace(TODOCommand,'')
     else:
-        journalEntry = config.defaultIndentLevel + " " + getCurrentTime() + " " + entry
+        journalEntry = config.defaultIndentLevel + " " + utils.getCurrentTime() + " " + entry
     
     if(not(ignoreURL)):
         print(entry)
-        journalEntryURL = containsYTURL(entry)
+        journalEntryURL = utils.containsYTURL(entry)
         print (journalEntryURL)
         if(journalEntryURL):
             #title = getWebPageTitle(journalEntryURL)
             journalEntry = journalEntry.replace(journalEntryURL, '{{youtube ' + journalEntryURL +'}}')
         else:
-            journalEntryURL = containsURL(entry)
+            journalEntryURL = utils.containsURL(entry)
             if(journalEntryURL):
-                title = getWebPageTitle(journalEntryURL)
+                title = utils.getWebPageTitle(journalEntryURL)
                 journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
             
     print (journalEntry)
@@ -92,16 +90,16 @@ def buildJournalEntry(entry, ignoreURL):
 
 def updateAsset(data, fileType):
     print('u')
-    path = assetsFolder + "/" + getTimestamp(True) + "." + fileType
+    path = assetsFolder + "/" + utils.getTimestamp(True) + "." + fileType
     print(config.getAssetsDestination())
     if(config.getAssetsDestination() == 'github'):
         update = False
         if(GitFileExists(path)):
             update = True
-        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, getTimestamp()) , data, GitHubBranch, update=update)
+        push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=update)
         path = ("![](./" + path + ")")
     elif(config.getAssetsDestination() == 'firebase'):
-        path = ("![](" + UploadToFirebase(data, path) + ")")
+        path = ("![](" + utils.UploadToFirebase(data, path) + ")")
     
     return path
 
@@ -129,8 +127,18 @@ def scanGit4Flashcards(path=""):
     return(flashcardsList)
 
 def updateFlashCards():
-    return flashcards.saveFlashcardsDB( scanGit4Flashcards())
-# flashcards.saveFlashcardsDB( scanGit4Flashcards("journals"), True )
-# flashcards.saveFlashcardsDB( scanGit4Flashcards(), True )
-# flashcards.searchFlashcard("")
-# print(  scanGit4Flashcards("pages")[1]  )
+    return flashcards.saveFlashcardsDB( scanGit4Flashcards() )
+
+def Git2Json(path=""):
+    AllFilesContent = []
+    contents = repo.get_contents(path)
+
+    while contents:
+        content = contents.pop(0)
+
+        if '/assets/' not in content.url:
+            if content.type == "dir":
+                contents.extend(repo.get_contents(content.path))
+            else:
+                AllFilesContent.append(getGitFileContent(content))
+    utils.saveasJson(AllFilesContent,"GitDump.json")

@@ -2,15 +2,15 @@ import datetime
 # import json
 import pickle
 # from uuid import uuid4
-
-
 from hashlib import md5
 from os import path
 
 import sm2
 
 from random import randint
+
 from config import getflashcardsTag
+from utils import containsRefBlock, findOrigBlock
 
 class Flashcard:
 
@@ -80,10 +80,22 @@ def buildFlashcardList(content, Qlist):
                     flashcard = Flashcard("-1", "-1", source)
                     flashcard.question = lines[i][currentIdent:].strip()
                     i += 1
-                elif(currentIdent > flashcardIndent + 1):  
+                elif(currentIdent > flashcardIndent + 1):  # scan for answer
+                    blockRef = containsRefBlock(lines[i])
+                    answer = ""
+                    if (blockRef):
+                        # print("o " + (lines[i][currentIdent:]))
+                        origLine = (lines[i][currentIdent:]).replace("(("+blockRef+"))","").strip()
+                        # print ("oo " + origLine)
+                        if(origLine):
+                            answer = origLine + " "
+                        answer += findOrigBlock(blockRef)
+                        # print("a " + answer)
+                    else:
+                        answer = lines[i][currentIdent:]
                     if(flashcard.answer == "-1"):
                         flashcard.answer = ""
-                    flashcard.answer += lines[i][currentIdent:].strip() + "\n"
+                    flashcard.answer += answer.strip() + "\n"
                     i += 1                
                 else:
                     isSub = False
@@ -149,7 +161,7 @@ def updateFlashcard(flaschard):
     
     return datetime.datetime.fromtimestamp(flaschard.next).strftime("%Y-%m-%d") 
 
-def a():
+def getFlashcardFromPool():
     flashcardsList = loadFlashcardsDB()
     tsToday = (datetime.datetime.now()).timestamp()
     overdueFC =  [ x for x in flashcardsList if (x.next) <= tsToday ] # get overdue FC
@@ -158,9 +170,4 @@ def a():
     else:
         return None
 
-# a = loadFlashcardsDB()
-# print(a[0])'
-#scan4Flashcards("buildFlashcardList")
-# print ( datetime.datetime.fromtimestamp(questions[0].next) )
-# randIndex = randint()
-# print(len(overdueFC))
+

@@ -1,11 +1,17 @@
 from datetime import datetime
 import re
-from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, 
-                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed
-                  )
+import json
 import requests
 import hashlib
 from os.path import basename
+
+from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, 
+                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed
+                  )
+
+# from flashcards import scan4Flashcards, saveFlashcardsDB
+import flashcards
+from git import Git2Json
 
 bootTime = datetime.now()
 
@@ -57,7 +63,12 @@ def containsURL(s):
     else:
       return False
 
- 
+def containsRefBlock(s):
+  try:
+    return (re.search(r"\(\((.*?)\)\)", s)).group(1)
+  except:
+    return False
+  
 def getWebPageTitle(url, title_re=re.compile(r'title[^>]*>([^<]+)<\/title>', re.UNICODE )): 
     r = requests.get(url)
     if r.status_code == 200:
@@ -117,3 +128,40 @@ def getlatestNews():
   # print (recentNews)
   return recentNews
 
+def saveasJson(content, file):
+    with open(file, 'w') as outfile:
+        json.dump(content, outfile)
+
+def findOrigBlock(ref):
+    with open('GitDump.json') as json_file:
+        AllFilesContent = json.load(json_file)
+
+    origBlock = ""
+    for fileContent in AllFilesContent:
+        if ":id: " + ref in fileContent.lower() or ":id:" + ref in fileContent.lower(): #add no space after id:
+            lines = fileContent.split('\n')
+            i = 0
+            while i <= len(lines) - 1:
+                if ":id: " + ref in lines[i].lower() or ":id:" + ref in lines[i].lower():
+                    break
+                i += 1
+            origLine = lines[i-2]
+            origBlock = origLine[origLine.index(' '):].strip()
+            break
+    return(origBlock)
+
+
+def scanJson4Flashcards():
+  Git2Json()
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)
+
+  flashcardsList = []
+
+  for fileContent in AllFilesContent:
+    flashcardsList += flashcards.scan4Flashcards( fileContent ) 
+  
+  return(flashcardsList)
+
+def updateFlashCards():
+    return flashcards.saveFlashcardsDB( scanJson4Flashcards() )

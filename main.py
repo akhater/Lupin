@@ -3,6 +3,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from io import BytesIO
 from uuid import uuid4
 
+# from flashcards import updateFlashcard, getFlashcardFromPool
 import flashcards
 
 from config import (
@@ -11,8 +12,8 @@ from config import (
 )
 
 from dictionaries import bot_messages, btns
-from git import updateJournal, updateAsset, updateFlashCards
-from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews
+from git import updateJournal, updateAsset #, updateFlashCards
+from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews, updateFlashCards
 from hypothesis import getHypothesisAnnotations
 
 
@@ -171,7 +172,7 @@ def TimeSpacedRepetition(update, context, uid=""):
                 except:
                     roundGoal = getflashcardDailyGoal()
 
-            flashcard = flashcards.a()
+            flashcard = flashcards.getFlashcardFromPool()
             if(flashcard):
                 message = "Card " + str(roundCount) + " out of " + str(roundGoal) + "\n" 
                 context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
