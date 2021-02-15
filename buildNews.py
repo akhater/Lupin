@@ -19,7 +19,7 @@ newslist['news'].append({
     'date': '2020-02-15',
     'news': 'Verion 3.0.0 experimental updates\n \
          A new version upgrade introducing MinMap capabilties among other thing. \
-         Send /getMM pageTitle and it Lupin will generate a Markmap file containing a mindmap of that page and send it to you. \nCredits to https://markmap.js.org/\n \
+         Send /getMM pageTitle and Lupin will generate a Markmap file containing a mindmap of that page and send it to you. \nCredits to https://markmap.js.org/\n \
          /tsr command is now renamed to /srs'
 })
 
