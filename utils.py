@@ -119,8 +119,8 @@ def getlatestNews():
     # print(news)
     if(news['newsid'] > int(lastNewsDisplayed)):
       recentNews.append(news['news'])
-  print(newslist['news'][len(newslist)-1]['newsid'])
-  setlastNewsDisplayed(newslist['news'][len(newslist)-1]['newsid'])
+  print(newslist['news'][len(newslist)]['newsid'])
+  setlastNewsDisplayed(newslist['news'][len(newslist)]['newsid'])
   return recentNews
 
 def saveasJson(content, file):
