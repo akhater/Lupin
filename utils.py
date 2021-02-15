@@ -9,9 +9,9 @@ from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journa
                     journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed
                   )
 
-# from flashcards import scan4Flashcards, saveFlashcardsDB
 import flashcards
-from git import Git2Json
+from mindmap import buildMindmapTree
+
 
 bootTime = datetime.now()
 
@@ -100,7 +100,6 @@ def getPageTitle(path):
   return basename(path).replace(journalsFilesExtension, '')
 
 def UploadToFirebase(data, path):
-  #https://firebasestorage.googleapis.com/v0/b/monolith-6154f.appspot.com/o/shareX%2F$filename$
   APIRUI = 'https://firebasestorage.googleapis.com/v0/b/' + getFirebaseBucketName() + "/o/" + path.replace('/', '%2F') 
   
   headers = {"Content-Type": "img/jpg"}
@@ -108,8 +107,6 @@ def UploadToFirebase(data, path):
   result = requests.post(APIRUI, 
                         headers=headers, 
                         data=data)
-  #print (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
-  # https://firebasestorage.googleapis.com/v0/b/monolith-6154f.appspot.com/o/assets%2F202102091338.jpg?alt=media&token=95ace281-fa00-42f8-837a-8f80e6bc4ca9
   return (APIRUI + "?alt=media&token=" + result.json()['downloadTokens'])
 
 def getlatestNews():
@@ -117,7 +114,6 @@ def getlatestNews():
 
   newslist = (requests.get(url)).json()
   lastNewsDisplayed = getlastNewsDisplayed()
-  # print (newslist['news'][0]['news'])
   recentNews = []
   for news in newslist['news']:
     # print(news)
@@ -125,7 +121,6 @@ def getlatestNews():
       recentNews.append(news['news'])
   print(newslist['news'][len(newslist)-1]['newsid'])
   setlastNewsDisplayed(newslist['news'][len(newslist)-1]['newsid'])
-  # print (recentNews)
   return recentNews
 
 def saveasJson(content, file):
@@ -150,9 +145,9 @@ def findOrigBlock(ref):
             break
     return(origBlock)
 
-
 def scanJson4Flashcards():
-  Git2Json()
+  from git import Git2Json 
+  Git2Json() 
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)
 
@@ -165,3 +160,61 @@ def scanJson4Flashcards():
 
 def updateFlashCards():
     return flashcards.saveFlashcardsDB( scanJson4Flashcards() )
+
+def convert2MD(pageTitle):
+  from git import Git2Json 
+  Git2Json()
+
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+ 
+  for content in AllFilesContent:
+    lines = content.split('\n')
+    lvl1 = -1
+
+    i = 0
+    out = ""
+    continueScan = True
+    while i <= len(lines) - 1:
+      line = lines[i]
+      if(line):
+        # print(line[0])
+        if 'title:' in line.lower() and pageTitle.lower() not in line.lower(): # not correct page
+          continueScan = False
+        if not continueScan:
+          break
+        if 'title:' in line.lower() and pageTitle.lower() in line.lower():
+          out += "# " + line.replace('title:', '').strip() + "\n"
+        elif line[0] == "#":
+          outln = ""
+          blockRef = containsRefBlock(line)
+          if (blockRef):
+            origLine = (line[line.index(' '):]).replace("(("+blockRef+"))","").strip()
+            if(origLine):
+              outln = origLine + " "
+            outln +=  findOrigBlock(blockRef)
+          else:
+            outln = line[line.index(' '):]
+
+          if(lvl1 == -1):
+            lvl1 = line.index(' ')
+          space = " "
+          for _ in range((line.index(' ')-lvl1)* 4):
+            space += " "
+          out += space + "- " + outln.strip()  + "\n" #+ (line[line.index(' '):]) + '\n' # .replace('#','-') + "\n"
+          # print(out)
+      i +=1
+  return(out)
+
+def convert2Mindmap(pageTitle):
+  from git import Git2Json 
+  Git2Json()
+
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+
+  for content in AllFilesContent:
+    if ('---\ntitle: ' + pageTitle.lower()) in content.lower():    
+      return json.dumps(buildMindmapTree(content, pageTitle), default=lambda x: x.__dict__)
+      # return json.dumps(buildMindmapTree(content, pageTitle).c[0], default=lambda x: x.__dict__)
+    

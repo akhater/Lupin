@@ -12,6 +12,7 @@ bot_messages = {
     'NOPENDIGCARDS_MESSAGE'     : '🎊🎈🎉🥳 You have no pending cards in your queue 🥳🎉🎈🎊',
     'NEXTROUND_MESSAGE'         : 'Good work ! This card will reappear starting: ',
     'IMPORTINGFC_MESSAGE'       : 'Scanning and importing your Git Repo for flashcards, I\'ll let you know once done...',
+    'FILEREQ_MESSAGE'           : 'Your file is being generated, I will send it to you once ready, hang-on ...',
     'IMPORTEDFC_MESSAGE'        : '{} flaschard(s) added & {} flaschard(s) updated.\nTest your knowledge now by running /tsr',
     'FLASHCARD_OPTIONS'         : 'Incorrect [ 😭:Hardest | 😖:Hard | 😕: Medium ], Correct [😊:Medium | 😄: Easy | 🥳: Easiest]',
     'CANCELLED_MESSAGE'         : 'Cancelled',

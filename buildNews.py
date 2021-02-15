@@ -14,5 +14,13 @@ x is the number of cards you\'d like to see. If you don\'t specify x the value s
 This version requires new values in your config.ini file'
 })
 
+newslist['news'].append({
+    'newsid': 2,
+    'date': '2020-02-15',
+    'news': 'Verion 3.0.0 experimental updates\n A new \"major\" version upgrade introducing MinMap capabilties among other thing. \
+send /getMM pageTitle and it Lupin will generate a Markmap file containing a mindmap of that page and send it to you. \
+\nCredits to https://markmap.js.org/\n \ /tsr command is now renamed to /srs'
+})
+
 with open('news.json', 'w') as outfile:
     json.dump(newslist, outfile)

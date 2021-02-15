@@ -42,7 +42,7 @@ def scan4Flashcards(content):
     buildFlashcardList(content, Qlist)
     return (Qlist)
 
-def countIdent(line):
+def countIdent(line): # TODO change that to .index and merge with utils function
     count = 0
     if(len(line) > 0):
         while line[count] == SEPARATOR:

@@ -1,6 +1,6 @@
 from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageHandler, PicklePersistence, Updater
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from io import BytesIO
+from io import BytesIO, StringIO
 from uuid import uuid4
 
 # from flashcards import updateFlashcard, getFlashcardFromPool
@@ -13,7 +13,7 @@ from config import (
 
 from dictionaries import bot_messages, btns
 from git import updateJournal, updateAsset #, updateFlashCards
-from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews, updateFlashCards
+from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews, updateFlashCards, convert2MD, convert2Mindmap
 from hypothesis import getHypothesisAnnotations
 
 
@@ -87,6 +87,75 @@ def image_handler(update, context):
         updateJournal(path, ignoreURL=True)
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['IMAGEUPLOAD_MESSAGE'].format(BotName,getBotVersion())) 
+
+def generateMD(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['FILEREQ_MESSAGE']) 
+        PageName = str(' '.join(context.args))
+        
+        s = StringIO()
+        s.write(convert2MD(PageName))
+        s.seek(0)
+
+        buf = BytesIO()
+        buf.write(s.getvalue().encode())
+        buf.seek(0)
+        #buf.name = f'PageName.md'
+        buf.name = f'{PageName}.md'
+
+        context.bot.send_document(chat_id=update.message.chat_id, document=buf)
+
+def generateMinmapHTML(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['FILEREQ_MESSAGE']) 
+
+        PageName = str(' '.join(context.args))
+
+        HTMLOut = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>""" + PageName + """ Mindmap</title>
+        <style>
+        * {
+        margin: 0;
+        padding: 0;
+        }
+        #mindmap {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        }
+        </style>
+
+        </head>
+        <body>
+        <svg id="mindmap"></svg>
+        <script src="https://cdn.jsdelivr.net/npm/d3@6.3.1"></script>
+        <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.2.2"></script>
+        <script>((e,t,r)=>{const{Markmap:n}=e();window.mm=n.create("svg#mindmap",null==t?void 0:t(),r)})(()=>window.markmap,t=>{return t=t||window.d3,{color:(n=t.scaleOrdinal(t.schemeCategory10),t=>n(t.p.i))};var n},
+        """ + convert2Mindmap(PageName) + """)</script>
+        </body>
+        </html>"""
+
+        s = StringIO()
+        s.write(HTMLOut)
+        s.seek(0)
+
+        buf = BytesIO()
+        buf.write(s.getvalue().encode())
+        buf.seek(0)
+        fileName = "mm_" + PageName.replace(' ','_').strip()
+        buf.name = f'{fileName}.html'
+
+        context.bot.send_document(chat_id=update.message.chat_id, document=buf)
 
 def ShowSkipCancelMenu(update, context, uid):
     button_list = [
@@ -181,6 +250,13 @@ def TimeSpacedRepetition(update, context, uid=""):
             else:
                 context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['NOPENDIGCARDS_MESSAGE'])  
 
+def tsrRetired(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE']) 
+    else:
+        message = "command /tsr is being replace by /srs please use the latter from now on"
+        context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
+
 def importFlashCards(update, context):
     if(not isBotAuthorized(update.effective_chat.id)):
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
@@ -212,7 +288,11 @@ def main():
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_handler(CommandHandler('anno', hypothesis))   
     dispatcher.add_handler(CommandHandler('importFC', importFlashCards))   
-    dispatcher.add_handler(CommandHandler('tsr', TimeSpacedRepetition))   
+    dispatcher.add_handler(CommandHandler('tsr', tsrRetired))   
+    dispatcher.add_handler(CommandHandler('srs', TimeSpacedRepetition))   
+    # dispatcher.add_handler(CommandHandler('getMD', generateMD))   
+    dispatcher.add_handler(CommandHandler('getMM', generateMinmapHTML))   
+
 
     dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
     dispatcher.add_handler(MessageHandler(Filters.photo, image_handler))

@@ -117,7 +117,7 @@ def scanGit4Flashcards(path=""):
     while contents:
         content = contents.pop(0)
         # print(content.url)
-        if '/assets/' not in content.url:
+        if '/assets/' not in content.url: #TODO change to assetsfolder
             if content.type == "dir":
                 contents.extend(repo.get_contents(content.path))
             else:
