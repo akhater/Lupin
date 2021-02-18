@@ -116,12 +116,14 @@ def getlatestNews():
   newslist = (requests.get(url)).json()
   lastNewsDisplayed = getlastNewsDisplayed()
   recentNews = []
+  lstNewsID = 0
   for news in newslist['news']:
     # print(news)
     if(news['newsid'] > int(lastNewsDisplayed)):
       recentNews.append(news['news'])
-  print(newslist['news'][len(newslist)]['newsid'])
-  setlastNewsDisplayed(newslist['news'][len(newslist)]['newsid'])
+    lstNewsID = news['newsid']
+  print(lstNewsID)
+  setlastNewsDisplayed(lstNewsID)
   return recentNews
 
 def saveasJson(content, file):
@@ -239,9 +241,11 @@ def getdateFormatter():
   
   # mapping = {'Y': 'yyyy', 'm': 'MM', 'd': 'dd', 'H': 'HH', 'M': 'mm', 'S': 'ss'}
   
-  content = AllFilesContent[13]
-  dateFormatter = re.findall(".*:date-formatter.*",content) # ,re.MULTILINE)
-  
+  for content in AllFilesContent:
+    dateFormatter = re.findall("\n :date-formatter.*",content) # ,re.MULTILINE)
+    if dateFormatter:
+      break
+
   if not(dateFormatter):
     dateFormatter = '%b {th}, %Y'
   else:
@@ -252,6 +256,7 @@ def getdateFormatter():
     dateFormatter = dateFormatter[1:].replace('\"', ' ').rstrip() 
     dateFormatter = (Template(dateFormatter.replace(' ', ' $')).substitute(**mapping)).strip()
 
+  print(dateFormatter)
   return (dateFormatter)
 
 def generateCalendarsFile(contents):

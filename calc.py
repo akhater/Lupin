@@ -31,6 +31,7 @@ def buildCalendar(year, month):
     else:
         outofmonth = " outofmonth"
     
+    dayClass = ""
     for week in cal.monthdays2calendar(year, month):
         HTMLOUT += "<tr>"
         for day in week:
