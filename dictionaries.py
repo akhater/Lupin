@@ -18,6 +18,7 @@ bot_messages = {
     'CANCELLED_MESSAGE'         : 'Cancelled',
     'SKIPPED_MESSAGE'           : 'Skipped',
     'FLASHCARD_SOURCE'          : 'Flashcard source file ',
+    'PULL_MESSAGE'              : 'Pulling latest updates from your Git, I\'ll work in the background, you won\'t even notice me',
     'LINE_BREAK'                : '_______________________________________'
 }
 

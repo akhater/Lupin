@@ -1,7 +1,5 @@
 import datetime
-# import json
 import pickle
-# from uuid import uuid4
 from hashlib import md5
 from os import path
 
@@ -10,13 +8,11 @@ import sm2
 from random import randint
 
 from config import getflashcardsTag
-from utils import containsRefBlock, findOrigBlock
+import utils
 
 class Flashcard:
 
-    def __init__(self, question, answer, source):
-        #self.id = md5(bytes(question, encoding='utf-8')).hexdigest()
- #       self.uid = str(uuid4()) 
+    def __init__(self, question, answer, source): 
         self.question = question
         self.answer   = answer
         self.source   = source
@@ -52,22 +48,17 @@ def countIdent(line): # TODO change that to .index and merge with utils function
     return count
 
 def buildFlashcardList(content, Qlist):
-    #content = "---\ntitle: Feb 9th, 2021\n---\n\n## #flashcard \n### question 1 \n#### answer to 1 \n### question 2 \n#### answer 2\n#### answer 2\n### q3\n#### a3\n##\n\n"
     lines = content.split('\n')
-    #print(lines)
     i = 0
     source = ""
     while i <= len(lines) - 1:
         if 'title:' in (lines[i]).lower():
             source = lines[i].strip()
-        #print(str(i) + " " + lines[i])
         if getflashcardsTag() in lines[i]:
             flashcardIndent = countIdent(lines[i])
-            #print(currentIdent)
             isSub = True
             i += 1
             flashcard = Flashcard("-1", "-1", source)
-            #print(len(lines) - 1)
             while isSub:
                 if( i == len(lines)):
                     break
@@ -76,21 +67,17 @@ def buildFlashcardList(content, Qlist):
                 if(currentIdent == flashcardIndent + 1):
                     if(flashcard.question != "-1"):
                             Qlist.append(flashcard)
-                    # print(source)
                     flashcard = Flashcard("-1", "-1", source)
                     flashcard.question = lines[i][currentIdent:].strip()
                     i += 1
                 elif(currentIdent > flashcardIndent + 1):  # scan for answer
-                    blockRef = containsRefBlock(lines[i])
+                    blockRef = utils.containsRefBlock(lines[i])
                     answer = ""
                     if (blockRef):
-                        # print("o " + (lines[i][currentIdent:]))
                         origLine = (lines[i][currentIdent:]).replace("(("+blockRef+"))","").strip()
-                        # print ("oo " + origLine)
                         if(origLine):
                             answer = origLine + " "
-                        answer += findOrigBlock(blockRef)
-                        # print("a " + answer)
+                        answer += utils.findOrigBlock(blockRef)
                     else:
                         answer = lines[i][currentIdent:]
                     if(flashcard.answer == "-1"):
@@ -102,7 +89,6 @@ def buildFlashcardList(content, Qlist):
                     i -= 1
             if(flashcard.answer != "-1"):
                 Qlist.append(flashcard)
-                # print(str(flashcard))
         i += 1
 
 def saveFlashcardsDB(flashcardList, dump=False):

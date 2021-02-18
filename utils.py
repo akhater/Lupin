@@ -6,11 +6,12 @@ import hashlib
 from os.path import basename
 
 from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, 
-                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed
+                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile
                   )
 
 import flashcards
 from mindmap import buildMindmapTree
+from calc import buildCalendar
 
 
 bootTime = datetime.now()
@@ -146,8 +147,8 @@ def findOrigBlock(ref):
     return(origBlock)
 
 def scanJson4Flashcards():
-  from git import Git2Json 
-  Git2Json() 
+  # from git import Git2Json 
+  # Git2Json() 
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)
 
@@ -162,8 +163,8 @@ def updateFlashCards():
     return flashcards.saveFlashcardsDB( scanJson4Flashcards() )
 
 def convert2MD(pageTitle):
-  from git import Git2Json 
-  Git2Json()
+  # from git import Git2Json 
+  # Git2Json()
 
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)  
@@ -207,8 +208,8 @@ def convert2MD(pageTitle):
   return(out)
 
 def convert2Mindmap(pageTitle):
-  from git import Git2Json 
-  Git2Json()
+  # from git import Git2Json 
+  # Git2Json()
 
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)  
@@ -218,3 +219,54 @@ def convert2Mindmap(pageTitle):
       return json.dumps(buildMindmapTree(content, pageTitle), default=lambda x: x.__dict__)
       # return json.dumps(buildMindmapTree(content, pageTitle).c[0], default=lambda x: x.__dict__)
     
+def pageExists(pageTitle):
+  # from git import Git2Json 
+  # Git2Json()
+
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+
+  for content in AllFilesContent:
+    if ('---\ntitle: ' + pageTitle.lower()) in content.lower():
+      return True
+  
+  return False
+
+def getdateFormatter(): 
+
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+  
+  # mapping = {'Y': 'yyyy', 'm': 'MM', 'd': 'dd', 'H': 'HH', 'M': 'mm', 'S': 'ss'}
+  
+  content = AllFilesContent[13]
+  dateFormatter = re.findall(".*:date-formatter.*",content) # ,re.MULTILINE)
+  
+  if not(dateFormatter):
+    dateFormatter = '%b {th}, %Y'
+  else:
+    from string import Template
+    mapping = {'yyyy': '%Y', 'yy': '%y', 'MM': '%m', 'MMM': '%b', 'MMMM': '%B', 'dd': '%d', 'do': '{th}', 'EE': '%a', 'EEE': '%a', 'EEEEEE': '%A'}
+
+    dateFormatter = dateFormatter[0].split(':date-formatter')[1]
+    dateFormatter = dateFormatter[1:].replace('\"', ' ').rstrip() 
+    dateFormatter = (Template(dateFormatter.replace(' ', ' $')).substitute(**mapping)).strip()
+
+  return (dateFormatter)
+
+def generateCalendarsFile(contents):
+  import datetime as dt
+  today = dt.date.today()
+
+  lastMonth = today.replace(day=1) - dt.timedelta(days=1)
+  nextMonth = today.replace(day=28) + dt.timedelta(days=4)
+
+
+  out = "##\n" + buildCalendar(lastMonth.year, lastMonth.month) + "\n##\n" + buildCalendar(today.year, today.month) + "\n##\n"  + buildCalendar(nextMonth.year, nextMonth.month) + "\n"
+
+  t = (re.sub('(##[\\s\n]<!--LupinCalendarBegins-->).*?(<!--LupinCalendarEnds-->)', '', contents, flags=re.DOTALL)).strip()
+
+  out += t
+ 
+  return out
+

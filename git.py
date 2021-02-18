@@ -142,3 +142,11 @@ def Git2Json(path=""):
             else:
                 AllFilesContent.append(getGitFileContent(content))
     utils.saveasJson(AllFilesContent,"GitDump.json")
+
+def updateCalendarsFile():
+    path = "pages/" + config.getcalendarFile()
+    contents = getGitFileContent(path, True)
+
+    contents = utils.generateCalendarsFile(contents)
+
+    push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , contents, GitHubBranch, update=True)
