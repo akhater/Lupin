@@ -67,10 +67,16 @@ def GitFileExists(path):
 def buildJournalEntry(entry, ignoreURL):
     journalEntry = ""
 
-    if(TODOCommand in entry):
-        journalEntry = config.defaultIndentLevel + " TODO " + utils.getCurrentTime() + " " + entry.replace(TODOCommand,'')
+    currentTime = utils.getCurrentTime()
+    if currentTime:
+        currentTime += " "
     else:
-        journalEntry = config.defaultIndentLevel + " " + utils.getCurrentTime() + " " + entry
+        currentTime = ""
+
+    if(TODOCommand in entry):
+        journalEntry = config.defaultIndentLevel + " TODO " + currentTime + entry.replace(TODOCommand,'')
+    else:
+        journalEntry = config.defaultIndentLevel + " " + currentTime + entry
     
     if(not(ignoreURL)):
         print(entry)

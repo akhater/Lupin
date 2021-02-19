@@ -5,7 +5,7 @@ import requests
 import hashlib
 from os.path import basename
 
-from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, 
+from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, isEntryTimestamped,
                     journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile
                   )
 
@@ -28,12 +28,15 @@ def getAnnotationPath(uri):
   return 'annotations/' + getURIHash(uri) + journalsFilesExtension
 
 def getCurrentTime():
-  dateTimeObj = datetime.now()
-
-  if(hour24 == "true"):
-    return dateTimeObj.strftime("%H:%M") 
+  if(not(isEntryTimestamped())):
+    return ''
   else:
-    return dateTimeObj.strftime("%I:%M %p")
+    dateTimeObj = datetime.now()
+
+    if(hour24 == "true"):
+      return dateTimeObj.strftime("%H:%M") 
+    else:
+      return dateTimeObj.strftime("%I:%M %p")
 
 def getTimestamp(isoFormat=False):
   dateTimeObj = datetime.now()
