@@ -6,7 +6,7 @@ config.optionxform = str #not to convert config to lowercase
 config.read('config.ini')
 
 __vMajor__     = '3'
-__vMinor__     = '2'
+__vMinor__     = '3'
 __vPatch__     = '0'
 __vRel__       = 'e'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
@@ -25,7 +25,7 @@ journalsFilesFormat = (config.get('Misc','journalsFilesFormat'))
 journalsFilesExtension = (config.get('Misc','journalsFilesExtension'))
 journalsFolder = (config.get('Misc','journalsFolder'))
 journalsPrefix = (config.get('Misc','journalsPrefix'))
-TODOCommand = (config.get('Misc','TODOCommand'))
+# TODOCommand = (config.get('Misc','TODOCommand'))
 BookmarkTag = (config.get('Misc','BookmarkTag'))
 assetsFolder = (config.get('Misc','assetsFolder'))
 hypothesisToken = (config.get('hypothesis','hypothesisToken'))
@@ -147,4 +147,14 @@ def isEntryTimestamped():
         with open('config.ini', 'w') as configfile: 
             config.write(configfile)
         return True
-        
+
+def getCommandsMap():
+    from ast import literal_eval
+    try:
+        return literal_eval(config.get('Misc', 'CommandsMap'))
+    except:
+        CommandsMap = "{'TODO':'TODO', 'LATER':'LATER'}"
+        config.set('Misc', 'CommandsMap', CommandsMap)
+        with open('config.ini', 'w') as configfile: 
+            config.write(configfile)
+        return literal_eval(CommandsMap)

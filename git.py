@@ -12,7 +12,7 @@ GitHubToken = config.GitHubToken
 GitHubFullRepo = config.GitHubUser + "/" + config.GitHubRepo
 GitHubBranch = config.GitHubBranch
 BotName = config.BotName
-TODOCommand = config.TODOCommand
+# TODOCommand = config.TODOCommand
 assetsFolder = config.getAssetsFolder()
 
 g = Github(GitHubToken)
@@ -73,15 +73,18 @@ def buildJournalEntry(entry, ignoreURL):
     else:
         currentTime = ""
 
-    if(TODOCommand in entry):
-        journalEntry = config.defaultIndentLevel + " TODO " + currentTime + entry.replace(TODOCommand,'')
-    else:
-        journalEntry = config.defaultIndentLevel + " " + currentTime + entry
+    # print(processCommandsMapping('21:40 some non todo entry T'))
+    
+    journalEntry = config.defaultIndentLevel + " " + utils.processCommandsMapping(currentTime + entry)
+    # if(TODOCommand in entry):
+    #     journalEntry = config.defaultIndentLevel + " TODO " + currentTime + entry.replace(TODOCommand,'')
+    # else:
+    #     journalEntry = config.defaultIndentLevel + " " + currentTime + entry
     
     if(not(ignoreURL)):
-        print(entry)
+        # print(entry)
         journalEntryURL = utils.containsYTURL(entry)
-        print (journalEntryURL)
+        # print (journalEntryURL)
         if(journalEntryURL):
             #title = getWebPageTitle(journalEntryURL)
             journalEntry = journalEntry.replace(journalEntryURL, '{{youtube ' + journalEntryURL +'}}')

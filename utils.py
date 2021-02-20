@@ -6,7 +6,8 @@ import hashlib
 from os.path import basename
 
 from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, isEntryTimestamped,
-                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile
+                    journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile,
+                    getCommandsMap
                   )
 
 import flashcards
@@ -277,4 +278,24 @@ def generateCalendarsFile(contents):
   out += t
  
   return out
+
+def processCommandsMapping(entry):
+  import re
+  CommandsMap = getCommandsMap()
+
+  def replace(match):
+      return CommandsMap[match.group(0)]
+
+  s = (re.sub('|'.join(r'\b%s\b' % re.escape(s) for s in CommandsMap), 
+          replace, entry) )
+
+  rValue = ""
+  for _, value in CommandsMap.items():
+      if value in s:
+          rValue = s.split(value)
+          rValue = value + ' ' + (' '.join([x.strip() for x in rValue])).strip()
+  if rValue:
+    return rValue
+  else:
+    return entry
 
