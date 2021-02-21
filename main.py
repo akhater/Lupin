@@ -115,47 +115,52 @@ def generateMinmapHTML(update, context):
 
         PageName = str(' '.join(context.args))
 
-        HTMLOut = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>""" + PageName + """ Mindmap</title>
-        <style>
-        * {
-        margin: 0;
-        padding: 0;
-        }
-        #mindmap {
-        display: block;
-        width: 100vw;
-        height: 100vh;
-        }
-        </style>
+        MindMap = convert2Mindmap(PageName)
+        if(MindMap):
+            HTMLOut = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>""" + PageName + """ Mindmap</title>
+            <style>
+            * {
+            margin: 0;
+            padding: 0;
+            }
+            #mindmap {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            }
+            </style>
 
-        </head>
-        <body>
-        <svg id="mindmap"></svg>
-        <script src="https://cdn.jsdelivr.net/npm/d3@6.3.1"></script>
-        <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.2.2"></script>
-        <script>((e,t,r)=>{const{Markmap:n}=e();window.mm=n.create("svg#mindmap",null==t?void 0:t(),r)})(()=>window.markmap,t=>{return t=t||window.d3,{color:(n=t.scaleOrdinal(t.schemeCategory10),t=>n(t.p.i))};var n},
-        """ + convert2Mindmap(PageName) + """)</script>
-        </body>
-        </html>"""
+            </head>
+            <body>
+            <svg id="mindmap"></svg>
+            <script src="https://cdn.jsdelivr.net/npm/d3@6.3.1"></script>
+            <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.2.2"></script>
+            <script>((e,t,r)=>{const{Markmap:n}=e();window.mm=n.create("svg#mindmap",null==t?void 0:t(),r)})(()=>window.markmap,t=>{return t=t||window.d3,{color:(n=t.scaleOrdinal(t.schemeCategory10),t=>n(t.p.i))};var n},
+            """ + convert2Mindmap(PageName) + """)</script>
+            </body>
+            </html>"""
 
-        s = StringIO()
-        s.write(HTMLOut)
-        s.seek(0)
+            s = StringIO()
+            s.write(HTMLOut)
+            s.seek(0)
 
-        buf = BytesIO()
-        buf.write(s.getvalue().encode())
-        buf.seek(0)
-        fileName = "mm_" + PageName.replace(' ','_').strip()
-        buf.name = f'{fileName}.html'
+            buf = BytesIO()
+            buf.write(s.getvalue().encode())
+            buf.seek(0)
+            fileName = "mm_" + PageName.replace(' ','_').strip()
+            buf.name = f'{fileName}.html'
 
-        context.bot.send_document(chat_id=update.message.chat_id, document=buf)
+            context.bot.send_document(chat_id=update.message.chat_id, document=buf)
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['FILENOTFOUND_MESSAGE'].format(PageName)) 
+            
 
 def ShowSkipCancelMenu(update, context, uid):
     button_list = [
@@ -283,8 +288,9 @@ def pullnow(update, context):
     else:
         print("Unscheduled Housekeeping ...")
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['PULL_MESSAGE']) 
-        Git2Json()
-       
+        Git2Json() 
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['PULLDONE_MESSAGE']) 
+
 def main():
     bot_persistence = PicklePersistence(filename='persistence')
 

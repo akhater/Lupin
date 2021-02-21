@@ -92,7 +92,11 @@ def buildJournalEntry(entry, ignoreURL):
             journalEntryURL = utils.containsURL(entry)
             if(journalEntryURL):
                 title = utils.getWebPageTitle(journalEntryURL)
-                journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
+                if(config.journalsFilesExtension == '.md'):
+                    journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
+                elif(config.journalsFilesExtension == '.org'):
+                    journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [[' + journalEntryURL + '][' + title + ']]')
+
             
     print (journalEntry)
     return journalEntry

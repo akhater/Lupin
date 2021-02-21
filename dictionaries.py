@@ -18,7 +18,9 @@ bot_messages = {
     'CANCELLED_MESSAGE'         : 'Cancelled',
     'SKIPPED_MESSAGE'           : 'Skipped',
     'FLASHCARD_SOURCE'          : 'Flashcard source file ',
-    'PULL_MESSAGE'              : 'Pulling latest updates from your Git, I\'ll work in the background, you won\'t even notice me',
+    'FILENOTFOUND_MESSAGE'      : '{} was not found, if you have recently created the resouce you are looking for please run /pullnow first',
+    'PULL_MESSAGE'              : 'Pulling latest updates from your Git, I\'ll work in the background, you won\'t even notice me, I\'ll let you know once done...',
+    'PULLDONE_MESSAGE'          : 'I\'ve updated the latest content from your Git',
     'LINE_BREAK'                : '_______________________________________'
 }
 
