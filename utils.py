@@ -238,7 +238,7 @@ def pageExists(pageTitle):
   
   return False
 
-def getdateFormatter(): 
+def getdateFormatter_old(): 
 
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)  
@@ -263,6 +263,34 @@ def getdateFormatter():
   print(dateFormatter)
   return (dateFormatter)
 
+def getdateFormatter():
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+  
+  # mapping = {'Y': 'yyyy', 'm': 'MM', 'd': 'dd', 'H': 'HH', 'M': 'mm', 'S': 'ss'}
+  
+  for content in AllFilesContent:
+    dateFormatter = re.findall("\n :date-formatter.*",content) # ,re.MULTILINE)
+    if dateFormatter:
+      break
+
+  if not(dateFormatter):
+    dateFormatter = '%b {th}, %Y'
+  else:
+    mapping = {'yyyy': '%Y', 'yy': '%y', 'MM': '%m', 'MMM': '%b', 'MMMM': '%B', 'dd': '%d', 'do': '{th}', 'EE': '%a', 'EEE': '%a', 'EEEEEE': '%A'}
+
+    def replace(match):
+        return mapping[match.group(0)]
+
+    dateFormatter = dateFormatter[0].split(':date-formatter')[1]
+    dateFormatter = dateFormatter[1:].replace('\"', ' ').rstrip() 
+
+    dateFormatter = (re.sub('|'.join(r'\b%s\b' % re.escape(s) for s in mapping), 
+        replace, dateFormatter) )
+
+  print(dateFormatter.strip())
+  return (dateFormatter.strip())
+
 def generateCalendarsFile(contents):
   import datetime as dt
   today = dt.date.today()
@@ -280,7 +308,7 @@ def generateCalendarsFile(contents):
   return out
 
 def processCommandsMapping(entry):
-  import re
+  # import re
   CommandsMap = getCommandsMap()
 
   def replace(match):
