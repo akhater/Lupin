@@ -120,7 +120,10 @@ def getGitFileContent(file, fetchContent = False):
     if (fetchContent):
         file = repo.get_contents(file, ref=GitHubBranch)  # Get file from Branch
     # print(file.decoded_content.decode("utf-8"))
-    return file.decoded_content.decode("utf-8")  # Get raw string data
+    try:
+        return file.decoded_content.decode("utf-8")  # Get raw string data
+    except:
+        return None
 
 def scanGit4Flashcards(path=""):
     contents = repo.get_contents(path)
@@ -153,7 +156,10 @@ def Git2Json(path=""):
             if content.type == "dir":
                 contents.extend(repo.get_contents(content.path))
             else:
-                AllFilesContent.append(getGitFileContent(content))
+                gitFileContent = getGitFileContent(content)
+                if gitFileContent:
+                    AllFilesContent.append(gitFileContent)
+                    
     utils.saveasJson(AllFilesContent,"GitDump.json")
 
 def updateCalendarsFile():
