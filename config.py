@@ -158,3 +158,32 @@ def getCommandsMap():
         with open('config.ini', 'w') as configfile: 
             config.write(configfile)
         return literal_eval(CommandsMap)
+
+def getAgePublicKey():
+    return config.get('AgeEncryption', 'AgePublicKey')
+
+def generateAgeKeyFile():
+    keys_filename = os.path.expanduser("~/.config/age/keys.txt")
+    KEYFILE  = "# created: 2020-02-25T00:00:00\n# {}\n{}\n".format(getAgePublicKey(),config.get('AgeEncryption', 'AgePrivateKey'))
+
+    # with open(keys_filename, 'w') as f:
+    f =  open(keys_filename, 'w') 
+    f.write(KEYFILE)
+    f.close()
+
+def isGraphAgeEncrypted():
+    try:
+        if config.get('AgeEncryption', 'AgeEncrypted') == 'true':
+            return True
+        else:
+            return False
+    except:
+        config.set('AgeEncryption', 'AgeEncrypted', 'false')
+        with open('config.ini', 'w') as configfile: 
+            config.write(configfile)
+        return False
+
+def setGraphAgeEncrypted(state):
+    config.set('AgeEncryption', 'AgeEncrypted', state)
+    with open('config.ini', 'w') as configfile: 
+        config.write(configfile)

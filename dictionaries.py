@@ -21,7 +21,11 @@ bot_messages = {
     'FILENOTFOUND_MESSAGE'      : '{} was not found, if you have recently created the resouce you are looking for please run /pullnow first',
     'PULL_MESSAGE'              : 'Pulling latest updates from your Git, I\'ll work in the background, you won\'t even notice me, I\'ll let you know once done...',
     'PULLDONE_MESSAGE'          : 'I\'ve updated the latest content from your Git',
-    'LINE_BREAK'                : '_______________________________________'
+    'LINE_BREAK'                : '_______________________________________',
+    'ENCRYPTINGRAPH_MESSAGE'    : 'Encrypting your Graph, please be patient, this may take a little while, I\'ll let you know once it is done',
+    'DECRYPTINGRAPH_MESSAGE'    : 'Decrypting your Graph, please be patient, this may take a little while, I\'ll let you know once it is done',
+    'ENCRYPTDONE_MESSAGE'       : 'All your graph contents are now encrypted & I\'ve set AgeEncrypted to true in your config.ini',
+    'DECRYPTDONE_MESSAGE'       : 'All your graph contents are now decrypted & I\'ve set AgeEncrypted to false in your config.ini'
 }
 
 git_messages = {
