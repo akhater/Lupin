@@ -40,5 +40,13 @@ TODOCommand is now decomissioned and replaced by CommandsMap for greater flexibi
 TODO LATER etc...\n\n Version requires modifications in your config.ini file, please reffer to config.sample.ini'
 })
 
+newslist['news'].append({
+    'newsid': 5,
+    'date': '2020-02-26',
+    'news': 'Verion 3.4.0 experimental updates\n \
+With all the great themes why have only one? put your choice of themes in the /logseq directory and name them ThemeName.custom.css\
+then simply call Lupin with /themes to switch between one and the other.'
+})
+
 with open('news.json', 'w') as outfile:
     json.dump(newslist, outfile)

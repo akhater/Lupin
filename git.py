@@ -169,3 +169,24 @@ def updateCalendarsFile():
     contents = utils.generateCalendarsFile(contents)
 
     push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , contents, GitHubBranch, update=True)
+
+def getAllThemes():
+    AllThemes = []
+    contents = repo.get_contents('/logseq')
+    while contents:
+        content = contents.pop(0)
+        if 'custom.css' in content.path:
+            if content.path != "logseq/custom.css":
+                entry = [content.path.replace('logseq/','').replace('.custom.css',''), content]
+                AllThemes.append(entry)
+    
+    return(AllThemes)
+
+def switchTheme(cssFile):
+    cssContent =  getGitFileContent(cssFile)
+    push('logseq/custom.css', git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , cssContent, GitHubBranch, update=True)
+
+
+# a = getAllThemes()
+# print(a[0][1])
+# switchTheme(a[0][1])

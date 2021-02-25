@@ -21,7 +21,9 @@ bot_messages = {
     'FILENOTFOUND_MESSAGE'      : '{} was not found, if you have recently created the resouce you are looking for please run /pullnow first',
     'PULL_MESSAGE'              : 'Pulling latest updates from your Git, I\'ll work in the background, you won\'t even notice me, I\'ll let you know once done...',
     'PULLDONE_MESSAGE'          : 'I\'ve updated the latest content from your Git',
-    'LINE_BREAK'                : '_______________________________________'
+    'LINE_BREAK'                : '_______________________________________',
+    'PICKTHEME_MESSAGE'         : 'Pick your next theme ...',
+    'THEMESWITCHED_MESSAGE'     : 'I\'ve set your theme to {}, make sure to pull & refresh'
 }
 
 git_messages = {

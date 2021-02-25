@@ -12,7 +12,7 @@ from config import (
 )
 
 from dictionaries import bot_messages, btns
-from git import updateJournal, updateAsset, Git2Json, updateCalendarsFile #, updateFlashCards
+from git import updateJournal, updateAsset, Git2Json, updateCalendarsFile, getAllThemes, switchTheme #, updateFlashCards
 from utils import getUptime, getAnnotationPath, getPageTitle, getWebPageTitle, getlatestNews, updateFlashCards, convert2MD, convert2Mindmap
 from hypothesis import getHypothesisAnnotations
 
@@ -161,6 +161,30 @@ def generateMinmapHTML(update, context):
         else:
             context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['FILENOTFOUND_MESSAGE'].format(PageName)) 
             
+def listAllThemes(update, context):
+    if(not isBotAuthorized(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['UNAUTHORIZED_MESSAGE'].format(update.effective_chat.id)) 
+    else:
+        AllThemes = getAllThemes()
+        button_list = []
+        i = 0
+        for theme in AllThemes:
+            button_list.append([InlineKeyboardButton(theme[0],callback_data="ThemeSwitcher_"+str(i))])
+            i+=1
+        button_list.append([InlineKeyboardButton(btns['CANCEL'], callback_data=btns['CANCEL'])])
+        reply_markup =  InlineKeyboardMarkup(button_list)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['PICKTHEME_MESSAGE'], reply_markup=reply_markup) 
+
+def ThemeSwitcher(update, context):
+    args = update.callback_query.data.split('_')
+    themeIndex = int(args[1])
+    AllThemes = getAllThemes()
+    switchTheme(AllThemes[themeIndex][1])
+    context.bot.edit_message_text(
+        message_id = update.callback_query.message.message_id,
+        chat_id = update.callback_query.message.chat.id,
+        text = bot_messages['THEMESWITCHED_MESSAGE'].format(AllThemes[themeIndex][0]),
+        )
 
 def ShowSkipCancelMenu(update, context, uid):
     button_list = [
@@ -321,6 +345,7 @@ def main():
     # dispatcher.add_handler(CommandHandler('getMD', generateMD))   
     dispatcher.add_handler(CommandHandler('getMM', generateMinmapHTML))   
     dispatcher.add_handler(CommandHandler('pullnow', pullnow))   
+    dispatcher.add_handler(CommandHandler('themes', listAllThemes))   
 
     dispatcher.add_handler(MessageHandler(Filters.text, addEntry))
     dispatcher.add_handler(MessageHandler(Filters.photo, image_handler))
@@ -328,7 +353,8 @@ def main():
     dispatcher.add_handler(CallbackQueryHandler(ShowAnswer,pattern=btns['SHOW_ANSWER'])) 
     dispatcher.add_handler(CallbackQueryHandler(AnswerHandler,pattern="ansrfdbk"))
     dispatcher.add_handler(CallbackQueryHandler(Skip,pattern=btns['SKIP']))  
-    dispatcher.add_handler(CallbackQueryHandler(Cancel,pattern=btns['CANCEL'])) 
+    dispatcher.add_handler(CallbackQueryHandler(Cancel,pattern=btns['CANCEL']))  
+    dispatcher.add_handler(CallbackQueryHandler(ThemeSwitcher,pattern="ThemeSwitcher"))
 
 
     updater.start_polling()
