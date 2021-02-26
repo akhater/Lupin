@@ -1,4 +1,4 @@
-# Who am i ?
+# Who am I ?
 Hey I am Lupin, an Open Source [Telegram](https://telegram.org/) [Python Chat Bot](https://github.com/python-telegram-bot/python-telegram-bot) build for adding quick Journal Entries into [LogSeq](https://github.com/logseq/logseq/)
 
 
@@ -36,7 +36,51 @@ Lupin requires Python version >= 3.x
     * 18:52 {{Youtube link}}
 * Send `/anno uri` to import all your annotations from for the uri from [Hypothesis](https://web.hypothes.is/)
 * Support for both LogSeq regular Journal and custom Journal folder and/or file
-* Other commands: /help | /start | /uptime | /ver | /anno 
+* Spaced Repetion: Spaced Repetition capabilities based on SuperMemo2 Algorithm 
+* Calendar Generation: Auto generates [PiotrSss](https://piotrsss.github.io/logseq-tools/public/#/mini-calendar) calendar and puts them in the sidebar
+* Theme Switcher: Switch between multiple themes by calling /themes
+* Generate Mindmaps of your pages by called /getMM PageTitle
+* Support for [AGE encryption](https://age-encryption.org/) and encrypted Graphs
+## Spaced Repetition
+Supported format for flaschards is
+```
+## #flashcardtag
+### Question 1
+#### answer line 1
+#### answer line 2
+### Question 2
+#### Answer 2
+```
+Flashcard tag is customizable
+Algorithm used is SuperMemo2
+Triggers are 
+/tsr import --> scan - import - update your flashcards
+/tsr x -> retrieve x flashcards from you pending pool
+/tsr -> retrieve the default number of cards set in your config .ini file
+Below entry in config.ini specifies you default number of flashcards
+```
+[TimeSpacedRepetion]
+flashcardDailyGoal=10
+```
+## Theme Switcher
+Before being able to use this feature you need to name your various themes in the format `ThemeName.custom.css` and place them in the /logseq folder
+
+## Commands summary 
+| Command          | Description                                   |
+|------------------|-----------------------------------------------|
+| /start           | Just a greeting                               |
+| /uptime          | returns Lupin Uptime                          |
+| /ver             | returns Lupin running Version                 |
+| /help            | help command (WIP)                            |
+| /anno URL        | Import hypothesis annotations from URL        |
+| /importFC        | Imports your Flashcards into Lupin            |
+| /srs import      | alias of /importFC                            |
+| /srs x           | starts a round of SRS for x flashcards        |
+| /getMM pageTitle | Generates a dynamic MindMap for pageTitle     |
+| /pullNow         | Pulls all pages from your Git for fast access |
+| /themes          | calls the theme changer                       |
+| /encryptAll      | Encrypts all your pages with AGE keys         |
+| /decryptAll      | Decrypts all your pages back to clear text    |
 ## Screenshots
 Imported [Hypothesis](https://web.hypothes.is/) notes into LogSeq
 ![](https://media.discordapp.net/attachments/808007880988426250/808378985016721408/unknown.png?width=998&height=821)
@@ -45,5 +89,9 @@ Imported [Hypothesis](https://web.hypothes.is/) notes into LogSeq
 * [PyGithub](https://github.com/PyGithub/PyGithub)
 * [LogSeq](https://github.com/logseq/logseq/)
 * [Hypothesis](https://web.hypothes.is/)
+* [PiotrSss](https://piotrsss.github.io/logseq-tools/public/#/mini-calendar)
+* [Doctorpangloss](https://gist.github.com/doctorpangloss/13ab29abd087dc1927475e560f876797)
+* [Markmap](https://markmap.js.org/)
+* [PyAge](https://github.com/jojonas/pyage/tree/master/src/age)
 ## License
 [MIT License](./LICENSE)
