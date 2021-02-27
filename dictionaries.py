@@ -23,7 +23,8 @@ bot_messages = {
     'PULLDONE_MESSAGE'          : 'I\'ve updated the latest content from your Git',
     'LINE_BREAK'                : '_______________________________________',
     'PICKTHEME_MESSAGE'         : 'Pick your next theme ...',
-    'THEMESWITCHED_MESSAGE'     : 'I\'ve set your theme to {}, make sure to pull & refresh'
+    'THEMESWITCHED_MESSAGE'     : 'I\'ve set your theme to {}, make sure to pull & refresh',
+    'NOPAGEMM_MESSAGE'          : 'I need the title of the page you want to convert to a MindMap, correct syntax is /getMM pageTitle'
 }
 
 git_messages = {

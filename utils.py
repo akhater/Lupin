@@ -75,7 +75,7 @@ def containsRefBlock(s):
     return False
   
 def getWebPageTitle(url, title_re=re.compile(r'title[^>]*>([^<]+)<\/title>', re.UNICODE )): 
-    r = requests.get(url)
+    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
     if r.status_code == 200:
         match = title_re.search(r.text)
         if match:
