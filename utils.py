@@ -39,11 +39,14 @@ def getCurrentTime():
     else:
       return dateTimeObj.strftime("%I:%M %p")
 
-def getTimestamp(isoFormat=False):
+def getTimestamp(isoFormat=False,withSeconds=False):
   dateTimeObj = datetime.now()
   
   if isoFormat:
-    return dateTimeObj.strftime("%Y%m%d%H%M") 
+    if withSeconds:
+      return dateTimeObj.strftime("%Y%m%d%H%M%S%f") 
+    else:
+      return dateTimeObj.strftime("%Y%m%d%H%M") 
   elif (hour24 == "true"):
     return dateTimeObj.strftime("%Y-%m-%d %H:%M") 
   else:

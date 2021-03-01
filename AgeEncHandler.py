@@ -22,18 +22,20 @@ import config, utils
 
 
 def ageDecrypt(content):
-    fname = os.path.expanduser("~/.config/age/" + utils.getTimestamp(True) + ".txt")
+    fname = os.path.expanduser("~/.config/age/" + utils.getTimestamp(True, True) + ".txt")
 
     content = content.encode('utf-8')  
 
-    old_stdout = sys.stdout
+    # old_stdout = sys.stdout
 
-    sys.stdout = open(fname, 'w')
+    # sys.stdout = open(fname, 'w')
 
-    decrypt(infile=io.BytesIO(content),ascii_armored=True)
+    # decrypt(infile=io.BytesIO(content),ascii_armored=True)
 
-    sys.stdout = old_stdout
-    
+    # sys.stdout = old_stdout
+    f = open(fname, 'wb')
+    decrypt(infile=io.BytesIO(content),outfile=f,ascii_armored=True)
+
     f = open(fname, 'r')
     out = f.read()
     f.close()
@@ -75,18 +77,35 @@ def convertToAgeString(content):
 
 
 
-# encContent="""-----BEGIN AGE ENCRYPTED FILE----- YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBscmd3UlAwZGdkLzVTcXAr NklQNHdMWW82TmxFLzNRWFJvRVlHS0JqMHhRClQzdTNpTGhqNnVXMFAzOE1LT1d1 alpXRlcvSWhhblV1UjM0eHVNVXlJekEKLT4gXidFKlwtZ3JlYXNlIHJUWDRwUFgg WC8scQpTMWdocldUUysxK202K1JTbVFBYk1vYXVqZkN4NzJpUXFIZGlXZ3Y2b3FV TkkzVklZUi9XejNPOWFibXN1Yi81CjJ5UHphd1FkNDhmU2ZqQjBqOXk5ME5uYk4v YUQrcTNDS2J3Ci0tLSBITU1nMHU3eExnV3QxM1pYbFpmT0ZXdU5pRldTdHZWMXc1 cDkwemlpTTRVCgsAcjgnhukeR2hMZbIY6B9RAy/BQ091Q1eZr3ucyIrI1bnI3wDw R9l+sHYZrNYvUhBviGM1mfXUYjcfenviclFaSmA0duoRpvajUKxQCZF8Xz44gjW/ Elp37mh4sYTJYDBQ8Ad9XqhxYNFmaIX+44b7DsK7slTrfzxF3cW/fw== -----END AGE ENCRYPTED FILE-----"""
-# encContent="""-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBscmd3UlAwZGdkLzVTcXAr\nNklQNHdMWW82TmxFLzNRWFJvRVlHS0JqMHhRClQzdTNpTGhqNnVXMFAzOE1LT1d1\nalpXRlcvSWhhblV1UjM0eHVNVXlJekEKLT4gXidFKlwtZ3JlYXNlIHJUWDRwUFgg\nWC8scQpTMWdocldUUysxK202K1JTbVFBYk1vYXVqZkN4NzJpUXFIZGlXZ3Y2b3FV\nTkkzVklZUi9XejNPOWFibXN1Yi81CjJ5UHphd1FkNDhmU2ZqQjBqOXk5ME5uYk4v\nYUQrcTNDS2J3Ci0tLSBITU1nMHU3eExnV3QxM1pYbFpmT0ZXdU5pRldTdHZWMXc1\ncDkwemlpTTRVCgsAcjgnhukeR2hMZbIY6B9RAy/BQ091Q1eZr3ucyIrI1bnI3wDw\nR9l+sHYZrNYvUhBviGM1mfXUYjcfenviclFaSmA0duoRpvajUKxQCZF8Xz44gjW/\nElp37mh4sYTJYDBQ8Ad9XqhxYNFmaIX+44b7DsK7slTrfzxF3cW/fw==\n-----END AGE ENCRYPTED FILE-----\n"""
+# encContent = """-----BEGIN AGE ENCRYPTED FILE-----
+# YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBUQ0xxRi96NXA1Vnd6aXFB
+# MC9SNktqQ2Q1d3BpM0hDdHhqYW1CQXNFeGh3ClBZRVZYZlJaMXlpa1RMVkg1RHNz
+# Vk1Xd0xBbSt5cDlEUG11bUZLY0ZZZDQKLS0tIG9VT25iZDN3WVprUjJXQllCcG5C
+# dUh2RkdUZWNsVGpHV2lxaDJwTDFmb3MKdANQTPytONgfuHB2Pmqd6R1AlEUh2ZgB
+# I0AQsILPcWZaB1zgCDlKxUhcGZuvbOpmSjHKVxiCdgZ4VmQW0cCYNGUtCO6irnKD
+# e3t7izZ0fZVrgI+zTiSpClbfJNAQYDx9JVJnyDjMeT8+WqMZp4jWzClcjRguu1uQ
+# lrW7SpaGF6Ny1rkSRHY+8OIy2Kkrdx4BF6SFwDlP6w6zuAjYcwvcf2modPQDSDY7
+# zkUgArC8jjHF62/F7aWn7UVUx2+vEsfJRlYhFdt0k0ykCi/aA4dt8mmyO1bl3dkp
+# YsdovHSnrJyTiDh6OW2YKljX2jfNGw9YOquEKmbpRPqbmjVZPc/BjH1IlzUTFt41
+# MRrL56ySj+4Owyml29esk3VydfbmqLgE9NNW+ntjOCdOsKZqC6YlXlnyZtKHQ6vu
+# L95l4xYZfN+KOvjVOagiTdzjS9YFde+jSGcIQJcIII2NgCdnIT8zw4XGv245NEsK
+# 5duagx3onwt3XOtW4ljGTgJw9cHQ6MisW+qdLe3Pl2MhkuqmKQXVbdqnmbqz8yG1
+# rWWmmIguI0qj1NwhrL8L3/33Z2zf93V9OiT+E/dUxdiiLZd5qHn9DhtImqvuSkMS
+# BUGQ9i8FSJK3fRBBUAnHAWLuqtwr1W92jNDZB1KQknCy1AWOZimRmmgm82w/pYy9
+# G0nKLOiK9UgNWCE8co0h4uwhq4jdBautEbywc0/yDmV3dg/AwpAldfECVux9oqTj
+# DVC4X0KHTFtTP6DRD5kjj+fXXpB3pPilWdXdt1I7Po2g/DrUbjmk8XMHY1ui0khT
+# rEczBiWjeArT3/KHVgTz5uL5TwiWqoADzscyC/lXSPaDJuoHNtP7MkgscGxA6g9e
+# 8W5uCHwWmE6w0CBJxIvZMmD6gwwZU5Avl21a8y17tjOCoIh3NXRItzcD1652280i
+# mXoAwGUDnQ9Q+yetPQ46F/iibntAgNnpcpeWev2VYlsQrWOoZepL16zMYwFOfUtK
+# ZdRWZXJ8xXyz3aygi2aBsoYN+lC1wrbdtI9fU/5/IOFMsR+uY6wqXutVMd3eeXfQ
+# 2rr3I/QK/D/4Qb73kbWiiol48DHONwm79S+Y725FPqb6ZL+dUqp33G8C8t3owzZI
+# dRfcMZRQKds7Ynzf1IIJJViIHkYGEpjokZazZ7VGHBQRMon38CSXclyWziNLLOTX
+# ppkI46O3wHoGWfCWuBJlOOb4p5J78B0kg6dwKIv6ZqDliJp23wTxqAOr8LnC8ezO
+# ZHTSivezhh6DLW24RtEw1YFc2yijErLQIWwDXVVOgnU49YGJn181DdQkuiuHSGlW
+# /yVI4uheICiwmqEsfmK6y2LSJgoDB2BNjo0X
+# -----END AGE ENCRYPTED FILE-----"""
+
 # if isAgeEncrypted(encContent) == 1:
 #     print(ageDecrypt(convertToAgeString(encContent)))
 # elif isAgeEncrypted(encContent) == 2:
 #     print(ageDecrypt(encContent))
-
-# PLAIN="""---
-# title: 2021_02_22
-# alias: 
-# ---
-
-# ## #bookmark [Mindmap terminal error · Issue #7 · akhater/Lupin · GitHub](https://github.com/akhater/Lupin/issues/7)
-# """
-# print(ageDecrypt(ageEncrypt(PLAIN)))
