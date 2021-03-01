@@ -44,16 +44,17 @@ def ageDecrypt(content):
 
 
 def ageEncrypt(content):
-    fname = os.path.expanduser("~/.config/age/" + utils.getTimestamp(True) + ".txt")
+    fname = os.path.expanduser("~/.config/age/" + utils.getTimestamp(True, True) + ".txt")
 
-    content = content.encode('utf-8')  
-    old_stdout = sys.stdout
+    # content = content.encode('utf-8')  
+    # old_stdout = sys.stdout
 
-    sys.stdout = open(fname, 'w')
+    # sys.stdout = open(fname, 'w')
+    f = open(fname, 'wb')
 
-    encrypt(recipients=[config.getAgePublicKey()], infile=io.BytesIO(content),ascii_armored=True)
+    encrypt(recipients=[config.getAgePublicKey()], infile=io.BytesIO(content), outfile=f,ascii_armored=True)
 
-    sys.stdout = old_stdout
+    # sys.stdout = old_stdout
 
     f = open(fname, 'r')
     out = f.read()
