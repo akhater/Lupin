@@ -1,5 +1,6 @@
 # Who am I ?
-Hey I am Lupin, an Open Source [Telegram](https://telegram.org/) [Python Chat Bot](https://github.com/python-telegram-bot/python-telegram-bot) build for adding quick Journal Entries into [LogSeq](https://github.com/logseq/logseq/)
+Hey I am Lupin, an Open Source [Telegram](https://telegram.org/) [Python Chat Bot](https://github.com/python-telegram-bot/python-telegram-bot) build to supercharge your [LogSeq](https://github.com/logseq/logseq/) with great features like 
+Interstitial Journaling | Flashcards | Brainmaps | PDF / Web Annotations |  {TODO; DOING; LATER} | Bookmarks | Images upload and more
 
 
 # Getting Started
@@ -24,8 +25,9 @@ Lupin requires Python version >= 3.x
    * Rename it
    * Translate it (no hard coded messages)
    * much more
-* Send a thought (any text) and Lupin will
+* Send a thought (any text) and Lupin will make your Interstitial Journaling a breeze 
    * Timestamp it: supporting both 12 and 24 hrs format
+   * You can also turn off the timestamp all together if that's what you want 
    * Enter it in your Github hosted Jounral 
 * Send your TODO list (by including TODO in the text) and Lupin will convert it to a LogSeq TODO
     * TODO command is customizable
