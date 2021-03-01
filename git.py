@@ -226,6 +226,7 @@ def decryptGraph():
                 if gitFileContent:
                     print("decrypting " + content.path)
                     try:
+                        gitFileContent = AgeEncHandler.ageDecrypt(gitFileContent)
                         push(content.path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , gitFileContent, GitHubBranch, update=True)
                     except:
                         print("***********" + content.path + "*******************")
