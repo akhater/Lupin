@@ -4,6 +4,7 @@ import json
 import requests
 import hashlib
 from os.path import basename
+from bs4 import BeautifulSoup
 
 from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, isEntryTimestamped,
                     journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile,
@@ -74,14 +75,13 @@ def containsRefBlock(s):
   except:
     return False
   
-def getWebPageTitle(url, title_re=re.compile(r'title[^>]*>([^<]+)<\/title>', re.UNICODE )): 
-    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    if r.status_code == 200:
-        match = title_re.search(r.text)
-        if match:
-            return match.group(1)
-        return Exception("No match for title in page")
-    raise Exception(r.status_code)
+def getWebPageTitle(url):
+  r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+  if r.status_code == 200:
+    html_text = r.text
+    soup = BeautifulSoup(html_text, 'html.parser')
+    return soup.title.text.strip()
+  raise Exception(r.status_code)
 
 def containsYTURL(s):
   url = re.search('((?:https?:)?//)?((?:www|m).)?((?:youtube.com|youtu.be))(/(?:[\\w-]+\\?v=|embed/|v/)?)([\\w-]+)(\\S+)?',s)
