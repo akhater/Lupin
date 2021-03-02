@@ -130,7 +130,6 @@ def updateAsset(data, fileType):
 def getGitFileContent(file, fetchContent = False):
     if (fetchContent):
         file = repo.get_contents(file, ref=GitHubBranch)  # Get file from Branch
-    # print(file.decoded_content.decode("utf-8"))
     try:
         content = file.decoded_content.decode("utf-8")  # Get raw string data
         if(config.isGraphAgeEncrypted()):
@@ -142,7 +141,8 @@ def getGitFileContent(file, fetchContent = False):
                 return content
         else:
             return content
-    except:
+    except Exception as e:
+        print(e)
         return None
 
 def scanGit4Flashcards(path=""):
@@ -210,6 +210,7 @@ def encryptGraph():
                     except:
                         print("***********" + content.path + "*******************")
                     # print(content.path)
+    print("*********** All Files Decrytped *******************")
     config.setGraphAgeEncrypted('true')       
 
 def decryptGraph():
@@ -230,4 +231,5 @@ def decryptGraph():
                     except:
                         print("***********" + content.path + "*******************")
                     # print(content.path)
+    print("*********** All Files Encrypted *******************")
     config.setGraphAgeEncrypted('false')                 
