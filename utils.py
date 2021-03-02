@@ -7,7 +7,7 @@ from os.path import basename
 
 from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, isEntryTimestamped,
                     journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile,
-                    getCommandsMap
+                    getCommandsMap, getMonths2Generate
                   )
 
 import flashcards
@@ -295,11 +295,20 @@ def generateCalendarsFile(contents):
   import datetime as dt
   today = dt.date.today()
 
-  lastMonth = today.replace(day=1) - dt.timedelta(days=1)
-  nextMonth = today.replace(day=28) + dt.timedelta(days=4)
+  months2Generate = getMonths2Generate()
+  
+  out = "##\n"
+  if int(months2Generate[0]) == 1:
+    lastMonth = today.replace(day=1) - dt.timedelta(days=1)
+    out +=  buildCalendar(lastMonth.year, lastMonth.month) + "\n##\n"
+  
+  out += buildCalendar(today.year, today.month) + "\n"
 
+  if int(months2Generate[1]) == 1:
+    nextMonth = today.replace(day=28) + dt.timedelta(days=4)
+    out += "##\n"  + buildCalendar(nextMonth.year, nextMonth.month) + "\n"
 
-  out = "##\n" + buildCalendar(lastMonth.year, lastMonth.month) + "\n##\n" + buildCalendar(today.year, today.month) + "\n##\n"  + buildCalendar(nextMonth.year, nextMonth.month) + "\n"
+  # out = "##\n" + buildCalendar(lastMonth.year, lastMonth.month) + "\n##\n" + buildCalendar(today.year, today.month) + "\n##\n"  + buildCalendar(nextMonth.year, nextMonth.month) + "\n"
 
   t = (re.sub('(##[\\s\n]<!--LupinCalendarBegins-->).*?(<!--LupinCalendarEnds-->)', '', contents, flags=re.DOTALL)).strip()
 

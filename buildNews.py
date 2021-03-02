@@ -48,5 +48,14 @@ With all the great themes why have only one? put your choice of themes in the /l
 then simply call Lupin with /themes to switch between one and the other.'
 })
 
+newslist['news'].append({
+    'newsid': 6,
+    'date': '2020-03-02',
+    'news': 'Verion 3.5.0 alpha updates\n \
+Added feature to control how many months (0 to 3) you want LUPIN to generate calendars for, this is controlled thru generateMonths array of config.ini.\
+first [0|1] specifies if you want LUPIN to generate prev month, second [0|1] specifies if you want LUPIN to generate next month\
+1,1 will generate prev,cur,next | 0,1 will generate curr,next | 0,0 will only generate curr'
+})
+
 with open('news.json', 'w') as outfile:
     json.dump(newslist, outfile)
