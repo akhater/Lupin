@@ -33,7 +33,7 @@ def push(path, message, content, branch, update=False):
         #pass
         repo.create_file(path, message, content, branch=branch, author=author)  # Add, commit and push Branch
      
-def updateJournal(entry, needsBuilding = True, path = None, overwrite=False, alias='', ignoreURL=False):
+def updateJournal(entry, needsBuilding=True, path=None, overwrite=False, alias='', ignoreURL=False, isJournalFile=True):
     if path == None:
         path = utils.getJournalPath()
     if needsBuilding:
@@ -41,9 +41,7 @@ def updateJournal(entry, needsBuilding = True, path = None, overwrite=False, ali
     if(GitFileExists(path)):
         file = repo.get_contents(path, ref=GitHubBranch)  # Get file from Branch
         if(overwrite):
-            #print(getPageTitle(path))
             data = "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n"
-            #print(data)
         else:
             data = file.decoded_content.decode("utf-8")  # Get raw string data
         
@@ -51,7 +49,10 @@ def updateJournal(entry, needsBuilding = True, path = None, overwrite=False, ali
 
         push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=True)
     else:
-        data =  "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
+        if isJournalFile:
+            data =  "---\ntitle: " + utils.getJournalTitle() + "\n---\n\n" + (entry).strip() + "\n"
+        else:
+            data =  "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
         
         push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=False)
 

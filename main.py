@@ -64,14 +64,14 @@ def hypothesis(update, context):
             #print(path)
             pageAlias = getWebPageTitle(context.args[0])
             
-            updateJournal(getHypothesisAnnotations(context.args[0]), False, path, True, pageAlias)
+            updateJournal(entry=getHypothesisAnnotations(context.args[0]), needsBuilding=False, path=path, overwrite=True, alias=pageAlias, isJournalFile=False)
 
             if(isHypothesisEmbedded()):
-                updateJournal(entry='{{embed [[' + getPageTitle(path) + ']]}}')
+                updateJournal(entry='{{embed [[' + getPageTitle(path) + ']]}}', isJournalFile=True)
             else: 
-                updateJournal(entry="Annotations of [" + pageAlias + "](" + getPageTitle(path) + ")")
+                updateJournal(entry="Annotations of [" + pageAlias + "](" + getPageTitle(path) + ")", isJournalFile=True)
         else:
-            updateJournal(getHypothesisAnnotations(context.args[0]), False)
+            updateJournal(getHypothesisAnnotations(context.args[0]), False, isJournalFile=False)
 
         context.bot.send_message(chat_id=update.effective_chat.id,
                             text=bot_messages['HYPOTHESIS_MESSAGE'].format(context.args[0]))
@@ -84,7 +84,7 @@ def image_handler(update, context):
         file = context.bot.getFile(update.message.photo[-1].file_id)
         f =  BytesIO(file.download_as_bytearray())
         path = updateAsset(f.getvalue(),"jpg")
-        updateJournal(path, ignoreURL=True)
+        updateJournal(path, ignoreURL=True, isJournalFile=False)
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=bot_messages['IMAGEUPLOAD_MESSAGE'].format(BotName,getBotVersion())) 
 

@@ -238,37 +238,11 @@ def pageExists(pageTitle):
   
   return False
 
-def getdateFormatter_old(): 
-
-  with open('GitDump.json') as json_file:
-    AllFilesContent = json.load(json_file)  
-  
-  # mapping = {'Y': 'yyyy', 'm': 'MM', 'd': 'dd', 'H': 'HH', 'M': 'mm', 'S': 'ss'}
-  
-  for content in AllFilesContent:
-    dateFormatter = re.findall("\n :date-formatter.*",content) # ,re.MULTILINE)
-    if dateFormatter:
-      break
-
-  if not(dateFormatter):
-    dateFormatter = '%b {th}, %Y'
-  else:
-    from string import Template
-    mapping = {'yyyy': '%Y', 'yy': '%y', 'MM': '%m', 'MMM': '%b', 'MMMM': '%B', 'dd': '%d', 'do': '{th}', 'EE': '%a', 'EEE': '%a', 'EEEEEE': '%A'}
-
-    dateFormatter = dateFormatter[0].split(':date-formatter')[1]
-    dateFormatter = dateFormatter[1:].replace('\"', ' ').rstrip() 
-    dateFormatter = (Template(dateFormatter.replace(' ', ' $')).substitute(**mapping)).strip()
-
-  print(dateFormatter)
-  return (dateFormatter)
 
 def getdateFormatter():
   with open('GitDump.json') as json_file:
     AllFilesContent = json.load(json_file)  
-  
-  # mapping = {'Y': 'yyyy', 'm': 'MM', 'd': 'dd', 'H': 'HH', 'M': 'mm', 'S': 'ss'}
-  
+    
   for content in AllFilesContent:
     dateFormatter = re.findall("\n :date-formatter.*",content) # ,re.MULTILINE)
     if dateFormatter:
@@ -336,3 +310,15 @@ def processCommandsMapping(entry):
   else:
     return entry
 
+def ord(n):
+    return str(n)+("th" if 4<=n%100<=20 else {1:"st",2:"nd",3:"rd"}.get(n%10, "th"))
+
+def styleDateTime(dt,f):
+    return dt.strftime(f).replace("{th}", ord(dt.day))
+
+
+def getJournalTitle():
+  return styleDateTime(datetime.now(), getdateFormatter())
+
+
+# print (getJournalTitle())
