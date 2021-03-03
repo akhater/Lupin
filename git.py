@@ -60,7 +60,11 @@ def updateJournal(entry, needsBuilding=True, path=None, overwrite=False, alias='
         push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=True)
     else:
         if isJournalFile:
-            data =  "---\ntitle: " + utils.getJournalTitle() + "\n---\n\n" + (entry).strip() + "\n"
+            journalTemplate = utils.getJournalTemplate()
+            if journalTemplate:
+                data =  "---\ntitle: " + utils.getJournalTitle() + "\n---\n\n" + journalTemplate + (entry).strip() + "\n"
+            else:
+                data =  "---\ntitle: " + utils.getJournalTitle() + "\n---\n\n" + (entry).strip() + "\n"
         else:
             data =  "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
         
@@ -173,7 +177,7 @@ def Git2Json(path=""):
 
     while contents:
         content = contents.pop(0)
-
+        # print("fetching " + content.path)
         if '/assets/' not in content.url:
             if content.type == "dir":
                 contents.extend(repo.get_contents(content.path))

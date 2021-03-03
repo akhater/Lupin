@@ -324,4 +324,17 @@ def getJournalTitle():
   return styleDateTime(datetime.now(), getdateFormatter())
 
 
-# print (getJournalTitle())
+def getJournalTemplate():
+  with open('GitDump.json') as json_file:
+    AllFilesContent = json.load(json_file)  
+      
+  for content in AllFilesContent:
+    JournalTemplate = re.findall("\n :default-templates\n {:journals.*",content) # ,re.MULTILINE)
+    if JournalTemplate:
+      break
+
+  if (JournalTemplate):
+    return JournalTemplate[0].split('\n :default-templates\n {:journals "')[1][:len(JournalTemplate)-3]
+  else:
+    return None
+  
