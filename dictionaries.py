@@ -23,7 +23,11 @@ bot_messages = {
     'LINE_BREAK'                : '_______________________________________',
     'PICKTHEME_MESSAGE'         : 'Pick your next theme ...',
     'THEMESWITCHED_MESSAGE'     : 'I\'ve set your theme to {}, make sure to pull & refresh',
-    'NOPAGEMM_MESSAGE'          : 'I need the title of the page you want to convert to a MindMap, correct syntax is /getMM pageTitle'
+    'NOPAGEMM_MESSAGE'          : 'I need the title of the page you want to convert to a MindMap, correct syntax is /getMM pageTitle',
+    'ENCRYPTINGRAPH_MESSAGE'    : 'Encrypting your Graph, please be patient, this may take a little while, I\'ll let you know once it is done',
+    'DECRYPTINGRAPH_MESSAGE'    : 'Decrypting your Graph, please be patient, this may take a little while, I\'ll let you know once it is done',
+    'ENCRYPTDONE_MESSAGE'       : 'All your graph contents are now encrypted & I\'ve set AgeEncrypted to true in your config.ini',
+    'DECRYPTDONE_MESSAGE'       : 'All your graph contents are now decrypted & I\'ve set AgeEncrypted to false in your config.ini'
 }
 
 git_messages = {

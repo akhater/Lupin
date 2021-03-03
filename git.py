@@ -4,6 +4,7 @@ from pprint import pprint
 
 import config
 import utils
+import AgeEncHandler
 
 from dictionaries import git_messages
 import flashcards 
@@ -44,8 +45,17 @@ def updateJournal(entry, needsBuilding=True, path=None, overwrite=False, alias='
             data = "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n"
         else:
             data = file.decoded_content.decode("utf-8")  # Get raw string data
+            if(config.isGraphAgeEncrypted()):
+                if AgeEncHandler.isAgeEncrypted(data) == 1: # encrypted but without \n requires transformation
+                    data =  (AgeEncHandler.ageDecrypt(AgeEncHandler.convertToAgeString(data)))
+                elif AgeEncHandler.isAgeEncrypted(data) == 2: # encrypted no transformation required
+                    data =  (AgeEncHandler.ageDecrypt(data))
+
         
         data += (entry).strip() + "\n"
+
+        if(config.isGraphAgeEncrypted()):
+            data = AgeEncHandler.ageEncrypt(data)
 
         push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=True)
     else:
@@ -54,6 +64,8 @@ def updateJournal(entry, needsBuilding=True, path=None, overwrite=False, alias='
         else:
             data =  "---\ntitle: " + utils.getPageTitle(path) + "\nalias: " + alias + "\n---\n\n" + (entry).strip() + "\n"
         
+        if(config.isGraphAgeEncrypted()):
+            data = AgeEncHandler.ageEncrypt(data)
         push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , data, GitHubBranch, update=False)
 
 def GitFileExists(path):
@@ -120,10 +132,19 @@ def updateAsset(data, fileType):
 def getGitFileContent(file, fetchContent = False):
     if (fetchContent):
         file = repo.get_contents(file, ref=GitHubBranch)  # Get file from Branch
-    # print(file.decoded_content.decode("utf-8"))
     try:
-        return file.decoded_content.decode("utf-8")  # Get raw string data
-    except:
+        content = file.decoded_content.decode("utf-8")  # Get raw string data
+        if(config.isGraphAgeEncrypted()):
+            if AgeEncHandler.isAgeEncrypted(content) == 1: # encrypted but without \n requires transformation
+                return (AgeEncHandler.ageDecrypt(AgeEncHandler.convertToAgeString(content)))
+            elif AgeEncHandler.isAgeEncrypted(content) == 2: # encrypted no transformation required
+                return (AgeEncHandler.ageDecrypt(content))
+            else: # not encrypted
+                return content
+        else:
+            return content
+    except Exception as e:
+        print(e)
         return None
 
 def scanGit4Flashcards(path=""):
@@ -168,7 +189,8 @@ def updateCalendarsFile():
     contents = getGitFileContent(path, True)
 
     contents = utils.generateCalendarsFile(contents)
-
+    if(config.isGraphAgeEncrypted()):
+        contents = AgeEncHandler.ageEncrypt(contents)
     push(path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , contents, GitHubBranch, update=True)
 
 def getAllThemes():
@@ -191,3 +213,45 @@ def switchTheme(cssFile):
 # a = getAllThemes()
 # print(a[0][1])
 # switchTheme(a[0][1])
+def encryptGraph():
+    contents = repo.get_contents("")
+
+    while contents:
+        content = contents.pop(0)
+
+        if '/assets/' not in content.url and '/logseq/' not in content.url:
+            if content.type == "dir":
+                contents.extend(repo.get_contents(content.path))
+            else:
+                gitFileContent = getGitFileContent(content)
+                if gitFileContent:
+                    print("encrypting " + content.path)
+                    try:
+                        encContents = (AgeEncHandler.ageEncrypt(gitFileContent))
+                        push(content.path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , encContents, GitHubBranch, update=True)
+                    except:
+                        print("***********" + content.path + "*******************")
+                    # print(content.path)
+    print("*********** All Files Decrytped *******************")
+    config.setGraphAgeEncrypted('true')       
+
+def decryptGraph():
+    contents = repo.get_contents("")
+
+    while contents:
+        content = contents.pop(0)
+
+        if '/assets/' not in content.url and '/logseq/' not in content.url:
+            if content.type == "dir":
+                contents.extend(repo.get_contents(content.path))
+            else:
+                gitFileContent = getGitFileContent(content)
+                if gitFileContent:
+                    print("decrypting " + content.path)
+                    try:
+                        push(content.path, git_messages['COMMIT_MESSAGE'].format(BotName, utils.getTimestamp()) , gitFileContent, GitHubBranch, update=True)
+                    except:
+                        print("***********" + content.path + "*******************")
+                    # print(content.path)
+    print("*********** All Files Encrypted *******************")
+    config.setGraphAgeEncrypted('false')                 
