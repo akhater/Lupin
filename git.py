@@ -120,7 +120,7 @@ def buildJournalEntry(entry, ignoreURL):
 
 def updateAsset(data, fileType):
     print('u')
-    path = assetsFolder + "/" + utils.getTimestamp(True) + "." + fileType
+    path = assetsFolder + "/" + utils.getTimestamp(True,True) + "." + fileType
     print(config.getAssetsDestination())
     if(config.getAssetsDestination() == 'github'):
         update = False

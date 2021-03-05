@@ -7,7 +7,7 @@ config.read('config.ini')
 
 __vMajor__     = '3'
 __vMinor__     = '7'
-__vPatch__     = '0'
+__vPatch__     = '1'
 __vRel__       = 'a'
 __version__    = __vMajor__ + '.' + __vMinor__ + '.' + __vPatch__ + __vRel__
 
