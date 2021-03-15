@@ -334,7 +334,6 @@ def getJournalTemplate():
       break
 
   if (JournalTemplate):
-    return JournalTemplate[0].split('\n :default-templates\n {:journals "')[1][:len(JournalTemplate)-3]
+    return JournalTemplate[0].split('\n :default-templates\n {:journals "')[1][:len(JournalTemplate)-3].replace("\\n","\n")
   else:
     return None
-  
