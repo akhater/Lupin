@@ -1,0 +1,11 @@
+version: "2"
+services:
+  lupin:
+    container_name: lupin
+    image: digitalknk/lupin
+    volumes:
+      - type: bind
+        source: ./config.ini
+        target: /app/config.ini
+    environment:
+      TZ: America/New_York

@@ -1,0 +1,8 @@
+.git
+__pycache__
+__pypackages__
+config.ini
+*.md
+GitDump.json
+persistence
+docker-compose.yaml
