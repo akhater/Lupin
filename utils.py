@@ -5,6 +5,8 @@ import requests
 import hashlib
 from os.path import basename
 from bs4 import BeautifulSoup
+import urllib.parse
+
 
 from config import ( hour24, journalsFilesFormat, journalsFilesExtension, journalsFolder, isEntryTimestamped,
                     journalsPrefix,getFirebaseBucketName, getlastNewsDisplayed, setlastNewsDisplayed, getcalendarFile,
@@ -83,7 +85,10 @@ def getWebPageTitle(url):
   if r.status_code == 200:
     html_text = r.text
     soup = BeautifulSoup(html_text, 'html.parser')
-    return soup.title.text.strip()
+    if soup.title:
+      return soup.title.text.strip()
+    else:
+      return r.url.strip()
   raise Exception(r.status_code)
 
 def containsYTURL(s):
@@ -337,3 +342,27 @@ def getJournalTemplate():
     return JournalTemplate[0].split('\n :default-templates\n {:journals "')[1][:len(JournalTemplate)-3].replace("\\n","\n")
   else:
     return None
+
+def generateTwitterIframe(TwitterUrl):
+  endpoint = 'https://publish.twitter.com/oembed?url='
+
+  TargetUrl = endpoint + TwitterUrl
+
+  r = requests.get(TargetUrl, headers={'User-Agent': 'Mozilla/5.0'})
+  
+  if r.status_code == 200:
+    jsonObj = json.loads(r.text)
+    srcCode = urllib.parse.quote(jsonObj['html']) 
+
+    iframeCode = ("""<iframe style="border:none;" width="550" height="400" data-tweet-url="{}" src="data:text/html;charset=utf-8,{}"></iframe>""").format(TwitterUrl,srcCode)
+
+    return iframeCode
+
+def containsTWUrl(s):
+    # url = re.search('((?:https?:)?//)?((?:www|m).)?((?:youtube.com|youtu.be))(/(?:[\\w-]+\\?v=|embed/|v/)?)([\\w-]+)(\\S+)?',s)
+    # url = re.search('(?:http://)?(?:www.)?twitter.com/(?:(?:\\w)*#!/)?(?:pages/)?(?:[\\w-]*/)*([\\w-]*)',s)
+    url = re.search('((?:https?:)?//)?(?:www.)?twitter.com/(?:(?:\\w)*#!/)?(?:pages/)?(?:[\\w-]*/)*([\\w-]*)',s)
+    if url:
+        return url.group()
+    else:
+        return False

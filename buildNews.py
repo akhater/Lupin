@@ -57,5 +57,13 @@ first [0|1] specifies if you want LUPIN to generate prev month, second [0|1] spe
 1,1 will generate prev,cur,next | 0,1 will generate curr,next | 0,0 will only generate curr'
 })
 
+newslist['news'].append({
+    'newsid': 7,
+    'date': '2020-03-22',
+    'news': 'Verion 3.8.0 experimental updates\n \
+Lupin now supports doker thanks to Jon Molina https://github.com/digitalknk.\
+Lupin also now supports Twitter embedding, Send a twitter URL to Lupin and see what happens.'
+})
+
 with open('news.json', 'w') as outfile:
     json.dump(newslist, outfile)

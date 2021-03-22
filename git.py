@@ -106,13 +106,17 @@ def buildJournalEntry(entry, ignoreURL):
             #title = getWebPageTitle(journalEntryURL)
             journalEntry = journalEntry.replace(journalEntryURL, '{{youtube ' + journalEntryURL +'}}')
         else:
-            journalEntryURL = utils.containsURL(entry)
+            journalEntryURL = utils.containsTWUrl(entry)
             if(journalEntryURL):
-                title = utils.getWebPageTitle(journalEntryURL)
-                if(config.journalsFilesExtension == '.md'):
-                    journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
-                elif(config.journalsFilesExtension == '.org'):
-                    journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [[' + journalEntryURL + '][' + title + ']]')
+                journalEntry = utils.generateTwitterIframe(journalEntryURL)
+            else:
+                journalEntryURL = utils.containsURL(entry)
+                if(journalEntryURL):
+                    title = utils.getWebPageTitle(journalEntryURL)
+                    if(config.journalsFilesExtension == '.md'):
+                        journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [' + title + '](' + journalEntryURL + ')')
+                    elif(config.journalsFilesExtension == '.org'):
+                        journalEntry = journalEntry.replace(journalEntryURL, '#' + config.BookmarkTag + ' [[' + journalEntryURL + '][' + title + ']]')
 
             
     print (journalEntry)
