@@ -32,6 +32,8 @@ Before pulling the container please follow these steps:
 1. Download [config.sample.ini](https://raw.githubusercontent.com/akhater/Lupin/master/config.sample.ini) and save it as`config.ini`
 1. Change values in `config.ini` to fit your environment 
 
+**Note**: That if you do not change the time zone _(TZ)_ your timestamp will reflect Eastern US Time _(America/New_York)_. You can see a [list of time zones here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) that way you can have the timestamp reflect a time zone of your choosing.
+
 You can run an instance of Lupin where your `config.ini` is located by typing this in your terminal:
 ```
 docker run -d \
