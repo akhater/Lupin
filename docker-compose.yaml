@@ -1,4 +1,4 @@
-version: "2"
+version: "3.2"
 services:
   lupin:
     container_name: lupin
@@ -9,3 +9,5 @@ services:
         target: /app/config.ini
     environment:
       TZ: America/New_York
+    restart: unless-stopped
+    
