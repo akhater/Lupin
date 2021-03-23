@@ -4,6 +4,9 @@ Interstitial Journaling | Flashcards | Brainmaps | PDF / Web Annotations |  {TOD
 
 
 # Getting Started
+There are two methods to deploy Lupin. You can install it manaully or your can use Docker. Either method will require that you place information in a `config.ini` file.
+
+## Manually via Python and PIP:
 Assuming you are already using [LogSeq](https://logseq.com) & are familar with Python.
 
 Lupin requires Python version >= 3.x
@@ -17,6 +20,69 @@ Lupin requires Python version >= 3.x
 1. Rename `config.sample.ini` to `config.ini`
 1. Change values in `config.ini` to fit your environment 
 1. Run the bot using `python main.py` or `python3 main.py` 
+
+## Docker
+The container is based off the [official python 3](https://hub.docker.com/_/python/) images.
+
+The only requirement is that you have [Docker](https://www.docker.com/) installed.
+
+Before pulling the container please follow these steps:
+1. Create a telegram bot: [https://core.telegram.org/bots#creating-a-new-bot](https://core.telegram.org/bots#creating-a-new-bot)
+1. Generate a Github personal token from [https://github.com/settings/tokens](https://github.com/settings/tokens)
+1. Download [config.sample.ini](https://raw.githubusercontent.com/akhater/Lupin/master/config.sample.ini) and save it as`config.ini`
+1. Change values in `config.ini` to fit your environment 
+
+**Note**: That if you do not change the time zone _(TZ)_ your timestamp will reflect Eastern US Time _(America/New_York)_. You can see a [list of time zones here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) that way you can have the timestamp reflect a time zone of your choosing.
+
+You can run an instance of Lupin where your `config.ini` is located by typing this in your terminal:
+```
+docker run -d \
+--name lupin \
+--mount type=bind,source=$(pwd)/config.ini,target=/app/config.ini \
+-e TZ=America/New_York \
+--restart unless-stopped \
+digitalknk/lupin
+```
+
+You could also create a `docker-compose.yaml` file and copy/paste the text from below or [download it](https://raw.githubusercontent.com/akhater/Lupin/master/docker-compose.yaml) from the repo, save it where your `config.ini` is located. You can then deploy Lupin by typing this in your terminal `docker-compose up -d` in the same directory.
+
+```
+version: "3.2"
+services:
+  lupin:
+    container_name: lupin
+    image: digitalknk/lupin
+    volumes:
+      - type: bind
+        source: ./config.ini
+        target: /app/config.ini
+    environment:
+      TZ: America/New_York
+    restart: unless-stopped
+```
+
+When a new update to the container is released, you can update your pulled image by running one of these depending your deployment strategy where your `config.ini` is located:
+
+If you used the `docker run` command:
+```
+docker stop lupin
+docker rm lupin
+docker run -d \
+--name lupin \
+--mount type=bind,source=$(pwd)/config.ini,target=/app/config.ini \
+-e TZ=America/New_York \
+--restart unless-stopped \
+digitalknk/lupin
+```
+
+If a `docker-compose.yaml` is used:
+```
+docker-compose stop
+docker-compose rm -f
+docker-compose pull   
+docker-compose up -d
+```
+
 # Features
 * Privacy always - self hosted & open source
 * Security 
