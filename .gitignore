@@ -152,3 +152,4 @@ persistence
 .archive/
 flashcards.db
 gitDump.json
+GitDump.json
